@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wörter Warrior - Horeca Duits</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Font fallbacks */
+        @font-face {
+            font-family: 'Bangers-Fallback';
+            src: local('Impact'), local('Arial Black'), local('sans-serif-black');
+            font-weight: bold;
+        }
+        :root {
+            --neon-pink: #ff2d95;
+            --neon-blue: #00f0ff;
+            --neon-green: #39ff14;
+            --neon-yellow: #fff01f;
+            --neon-orange: #ff9500;
+            --neon-purple: #bf5fff;
+            --dark-bg: #0a0a1a;
+            --card-bg: #1a1a2e;
+            --xp-gold: #ffd700;
+            --font-display: 'Bangers', 'Bangers-Fallback', Impact, 'Arial Black', sans-serif;
+            --font-body: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { font-size: 16px; }
+        body { font-family: var(--font-body); background: var(--dark-bg); min-height: 100vh; min-height: -webkit-fill-available; color: white; overflow-x: hidden; }
+        .bg-animation {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(ellipse at 20% 80%, rgba(255, 45, 149, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 20%, rgba(0, 240, 255, 0.15) 0%, transparent 50%), var(--dark-bg);
+        }
+        .header {
+            padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(26, 26, 46, 0.95); backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--neon-pink); position: sticky; top: 0; z-index: 100;
+            flex-wrap: wrap; gap: 0.5rem;
+        }
+        .logo { font-family: var(--font-display); font-size: clamp(1.2rem, 5vw, 1.8rem);
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; letter-spacing: 1px; }
+        .stats-bar { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        .stat-item { display: flex; align-items: center; gap: 0.3rem; padding: 0.4rem 0.6rem;
+            background: rgba(255,255,255,0.05); border-radius: 15px; font-size: 0.85rem; }
+        .stat-value { font-weight: 800; font-size: 0.95rem; }
+        .xp-value { color: var(--xp-gold); }
+        .streak-value { color: var(--neon-pink); }
+        .level-badge { background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue));
+            padding: 0.4rem 0.8rem; border-radius: 15px; font-weight: 800; font-size: 0.85rem; }
+        .container { max-width: 600px; margin: 0 auto; padding: 1rem; }
+        .start-screen { text-align: center; padding: 1.5rem 0.5rem; }
+        .start-screen h1 { font-family: var(--font-display); font-size: clamp(2rem, 10vw, 3.5rem); margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-yellow), var(--neon-blue));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            letter-spacing: 2px; line-height: 1.1; }
+        .start-screen .subtitle { font-size: 1rem; color: rgba(255,255,255,0.7); margin-bottom: 1.5rem; }
+        
+        /* Mode tabs */
+        .mode-tabs { display: flex; margin-bottom: 1.5rem; border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.05); }
+        .mode-tab { flex: 1; padding: 0.8rem; font-size: 0.95rem; font-weight: 700; border: none;
+            background: transparent; color: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.3s;
+            font-family: var(--font-body); }
+        .mode-tab.active { background: linear-gradient(135deg, var(--neon-pink), var(--neon-blue)); color: white; }
+        .mode-tab:hover:not(.active) { color: white; background: rgba(255,255,255,0.1); }
+        
+        .mode-content { display: none; }
+        .mode-content.active { display: block; }
+        
+        .mode-selector { display: flex; flex-direction: column; gap: 0.75rem; margin: 1.5rem 0; }
+        .mode-btn { padding: 1rem 1.5rem; font-size: 1rem; font-weight: 700; border: none;
+            border-radius: 12px; cursor: pointer; font-family: var(--font-body); transition: transform 0.2s;
+            touch-action: manipulation; }
+        .mode-btn:hover, .mode-btn:active { transform: scale(1.02); }
+        .mode-nl-de { background: linear-gradient(135deg, #ff6b6b, var(--neon-pink)); color: white; }
+        .mode-de-nl { background: linear-gradient(135deg, var(--neon-blue), #4facfe); color: white; }
+        .mode-mix { background: linear-gradient(135deg, var(--neon-green), #00b09b); color: black; }
+        .mode-flashcard { background: linear-gradient(135deg, var(--neon-purple), #8b5cf6); color: white; }
+        
+        .game-screen { display: none; }
+        .game-screen.active { display: block; }
+        .progress-bar { height: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 0.5rem; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
+            border-radius: 10px; transition: width 0.5s; }
+        .progress-text { text-align: center; font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-bottom: 1rem; }
+        .question-card { background: var(--card-bg); border-radius: 20px; padding: 1.25rem;
+            border: 2px solid rgba(255,255,255,0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        
+        /* SUPER DUIDELIJKE DIRECTION BADGE */
+        .direction-badge { display: block; text-align: center; padding: 0.9rem 1rem; border-radius: 12px;
+            font-size: clamp(0.9rem, 4vw, 1.2rem); font-weight: 800; margin-bottom: 1rem; letter-spacing: 0.5px; }
+        .direction-nl-de { background: linear-gradient(135deg, #ff6b35, #ff2d95); color: white;
+            border: 2px solid #ff6b35; box-shadow: 0 0 20px rgba(255,107,53,0.5); }
+        .direction-de-nl { background: linear-gradient(135deg, #00b4d8, #0077b6); color: white;
+            border: 2px solid #00b4d8; box-shadow: 0 0 20px rgba(0,180,216,0.5); }
+        .direction-arrow { font-size: 1.2rem; margin: 0 0.3rem; }
+        
+        .question-word { font-size: clamp(1.4rem, 6vw, 2rem); font-weight: 800; text-align: center; margin: 1rem 0;
+            padding: 0.8rem; background: rgba(255,255,255,0.05); border-radius: 12px; line-height: 1.3;
+            word-break: break-word; }
+        .answer-input { width: 100%; padding: 1rem; font-size: 1.1rem; font-family: var(--font-body);
+            border: 2px solid rgba(255,255,255,0.2); border-radius: 12px; background: rgba(255,255,255,0.08);
+            color: white; outline: none; margin: 1rem 0; -webkit-appearance: none; appearance: none; }
+        .answer-input:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,240,255,0.3); }
+        .answer-input::placeholder { color: rgba(255,255,255,0.4); }
+        .submit-btn { width: 100%; padding: 1rem; font-size: 1.1rem; font-weight: 800;
+            font-family: var(--font-body); border: none; border-radius: 12px;
+            background: linear-gradient(135deg, var(--neon-pink), #ff6b6b); color: white; cursor: pointer;
+            touch-action: manipulation; }
+        .submit-btn:active { transform: scale(0.98); }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .feedback { display: none; padding: 1rem; border-radius: 12px; margin-top: 1rem; }
+        .feedback.correct { display: block; background: rgba(57,255,20,0.15); border: 2px solid var(--neon-green); }
+        .feedback.partial { display: block; background: rgba(255,149,0,0.15); border: 2px solid var(--neon-orange); }
+        .feedback.incorrect { display: block; background: rgba(255,51,102,0.15); border: 2px solid #ff3366; }
+        .feedback-header { font-size: 1.1rem; font-weight: 800; margin-bottom: 0.5rem; }
+        .feedback.correct .feedback-header { color: var(--neon-green); }
+        .feedback.partial .feedback-header { color: var(--neon-orange); }
+        .feedback.incorrect .feedback-header { color: #ff3366; }
+        .feedback-message { font-size: 0.95rem; line-height: 1.5; }
+        .correct-answer { font-weight: 700; color: var(--neon-blue); }
+        .feedback-detail { margin-top: 0.6rem; padding: 0.6rem; background: rgba(255,255,255,0.05);
+            border-radius: 8px; border-left: 3px solid var(--neon-orange); font-size: 0.9rem; }
+        .feedback-detail strong { color: var(--neon-yellow); }
+        .context-sentence { margin-top: 0.8rem; padding: 0.8rem; background: rgba(255,255,255,0.05);
+            border-radius: 8px; font-style: italic; border-left: 3px solid var(--neon-blue); font-size: 0.9rem; }
+        .next-btn { margin-top: 0.8rem; padding: 0.7rem 1.5rem; font-size: 0.95rem; font-weight: 700;
+            font-family: var(--font-body); border: none; border-radius: 10px;
+            background: linear-gradient(135deg, var(--neon-blue), #4facfe); color: white; cursor: pointer;
+            touch-action: manipulation; }
+        
+        .xp-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0);
+            font-family: var(--font-display); font-size: clamp(2rem, 10vw, 3rem); color: var(--xp-gold);
+            text-shadow: 0 0 30px rgba(255,215,0,0.8); z-index: 1000; pointer-events: none; }
+        .xp-popup.show { animation: xpPop 1s ease forwards; }
+        .xp-popup.partial { color: var(--neon-orange); }
+        @keyframes xpPop { 0% { transform: translate(-50%,-50%) scale(0); opacity:1; }
+            50% { transform: translate(-50%,-50%) scale(1.3); opacity:1; }
+            100% { transform: translate(-50%,-70%) scale(1); opacity:0; } }
+        
+        .level-up-overlay { position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.95); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 2000; opacity: 0; pointer-events: none;
+            padding: 1rem; }
+        .level-up-overlay.show { opacity: 1; pointer-events: auto; }
+        .level-up-text { font-family: var(--font-display); font-size: clamp(2rem, 10vw, 4rem);
+            background: linear-gradient(90deg, var(--xp-gold), var(--neon-yellow));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .new-level { font-size: clamp(4rem, 15vw, 6rem); margin: 0.5rem 0; }
+        .level-up-title { font-size: clamp(1rem, 4vw, 1.5rem); color: rgba(255,255,255,0.8); text-align: center; }
+        
+        .streak-fire { position: relative; }
+        .streak-fire.on-fire::after { content: '🔥'; position: absolute; top: -8px; right: -12px; font-size: 1rem; }
+        
+        .results-screen { display: none; text-align: center; padding: 1rem 0.5rem; }
+        .results-screen.active { display: block; }
+        .results-header { font-family: var(--font-display); font-size: clamp(1.5rem, 7vw, 2.5rem); margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .results-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin: 1rem 0; }
+        .result-stat { background: var(--card-bg); padding: 1rem; border-radius: 12px; }
+        .result-stat-value { font-size: 1.5rem; font-weight: 800; }
+        .result-stat-label { font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-top: 0.3rem; }
+        .words-list { background: var(--card-bg); border-radius: 12px; padding: 1rem; margin: 0.75rem 0;
+            text-align: left; max-height: 150px; overflow-y: auto; }
+        .words-list h3 { margin-bottom: 0.75rem; font-size: 0.95rem; }
+        .words-list.correct h3 { color: var(--neon-green); }
+        .words-list.partial h3 { color: var(--neon-orange); }
+        .words-list.incorrect h3 { color: #ff3366; }
+        .word-item { padding: 0.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.85rem; }
+        .tips-section { background: linear-gradient(135deg, rgba(255,45,149,0.1), rgba(0,240,255,0.1));
+            border-radius: 12px; padding: 1rem; margin: 1rem 0; }
+        .tips-section h3 { margin-bottom: 0.75rem; color: var(--neon-yellow); font-size: 1rem; }
+        .tips-section ul { text-align: left; padding-left: 1.2rem; font-size: 0.9rem; }
+        .tips-section li { margin: 0.4rem 0; }
+        .restart-btn { padding: 1rem 2rem; font-size: 1rem; font-weight: 800;
+            font-family: var(--font-body); border: none; border-radius: 12px;
+            background: linear-gradient(135deg, var(--neon-green), #00b09b); color: black; cursor: pointer; margin-top: 0.5rem;
+            touch-action: manipulation; }
+        
+        .roast-bubble { position: fixed; bottom: 10px; left: 10px; right: 10px; max-width: 100%;
+            padding: 1rem; padding-left: 3rem; background: var(--card-bg); border-radius: 15px;
+            border: 2px solid var(--neon-pink); box-shadow: 0 5px 30px rgba(0,0,0,0.5);
+            transform: translateY(150%); transition: transform 0.4s; z-index: 500; }
+        .roast-bubble.show { transform: translateY(0); }
+        .roast-bubble::before { content: '🤖'; font-size: 1.5rem; position: absolute; top: 50%; left: 0.75rem; transform: translateY(-50%); }
+        .roast-bubble .close-btn { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px;
+            border: none; background: rgba(255,255,255,0.2); border-radius: 50%;
+            color: white; font-size: 18px; cursor: pointer; touch-action: manipulation; }
+        #roast-text { line-height: 1.4; font-size: 0.9rem; }
+        
+        .stop-btn { background: none; border: 1px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.5);
+            padding: 0.6rem 1rem; border-radius: 10px; cursor: pointer; font-family: var(--font-body); 
+            margin-top: 1.5rem; font-size: 0.9rem; touch-action: manipulation; }
+        
+        /* ============ FLASHCARD STYLES ============ */
+        .flashcard-screen { display: none; }
+        .flashcard-screen.active { display: block; }
+        
+        .flashcard-progress { display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 1rem; padding: 0.5rem; background: rgba(255,255,255,0.05); border-radius: 10px; }
+        .flashcard-counter { font-size: 0.9rem; color: rgba(255,255,255,0.7); }
+        .flashcard-piles { display: flex; gap: 1rem; font-size: 0.85rem; }
+        .pile-known { color: var(--neon-green); }
+        .pile-learning { color: var(--neon-orange); }
+        
+        .flashcard-container { perspective: 1000px; margin: 1rem 0; }
+        
+        .flashcard {
+            position: relative;
+            width: 100%;
+            min-height: 280px;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .flashcard.flipped { transform: rotateY(180deg); }
+        
+        .flashcard-face {
+            position: absolute;
+            width: 100%;
+            min-height: 280px;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .flashcard-front {
+            background: var(--card-bg);
+            border: 3px solid var(--neon-purple);
+        }
+        
+        .flashcard-back {
+            background: linear-gradient(135deg, rgba(191,95,255,0.2), rgba(0,240,255,0.2));
+            border: 3px solid var(--neon-blue);
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-lang { 
+            font-size: 0.9rem; 
+            font-weight: 700; 
+            padding: 0.4rem 1rem; 
+            border-radius: 20px; 
+            margin-bottom: 1rem;
+        }
+        .flashcard-front .flashcard-lang { 
+            background: linear-gradient(135deg, var(--neon-purple), #8b5cf6); 
+            color: white; 
+        }
+        .flashcard-back .flashcard-lang { 
+            background: linear-gradient(135deg, var(--neon-blue), #4facfe); 
+            color: white; 
+        }
+        
+        .flashcard-word {
+            font-size: clamp(1.5rem, 7vw, 2.2rem);
+            font-weight: 800;
+            line-height: 1.3;
+            margin: 0.5rem 0;
+            word-break: break-word;
+        }
+        
+        .flashcard-hint {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 1rem;
+        }
+        
+        .flashcard-context {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.7);
+            font-style: italic;
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            border-left: 3px solid var(--neon-blue);
+            text-align: left;
+            width: 100%;
+        }
+        
+        .flashcard-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        .flashcard-btn {
+            flex: 1;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: transform 0.2s, opacity 0.2s;
+            touch-action: manipulation;
+        }
+        .flashcard-btn:active { transform: scale(0.98); }
+        .flashcard-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        
+        .btn-later {
+            background: linear-gradient(135deg, var(--neon-orange), #ff6b6b);
+            color: white;
+        }
+        .btn-know-it {
+            background: linear-gradient(135deg, var(--neon-green), #00b09b);
+            color: black;
+        }
+        
+        .flashcard-flip-hint {
+            text-align: center;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.4);
+            margin-top: 0.5rem;
+        }
+        
+        .flashcard-direction-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .direction-toggle-btn {
+            flex: 1;
+            padding: 0.6rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: all 0.3s;
+        }
+        .direction-toggle-btn.active {
+            border-color: var(--neon-purple);
+            background: rgba(191,95,255,0.2);
+            color: white;
+        }
+        
+        /* Flashcard results */
+        .flashcard-results { display: none; text-align: center; padding: 1rem 0.5rem; }
+        .flashcard-results.active { display: block; }
+        
+        .flashcard-results-header {
+            font-family: var(--font-display);
+            font-size: clamp(1.5rem, 7vw, 2.5rem);
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .flashcard-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+        
+        .flashcard-stat {
+            background: var(--card-bg);
+            padding: 1.25rem;
+            border-radius: 12px;
+        }
+        .flashcard-stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+        .flashcard-stat-label {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            margin-top: 0.3rem;
+        }
+        
+        .continue-learning-btn {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 800;
+            font-family: var(--font-body);
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--neon-orange), #ff6b6b);
+            color: white;
+            cursor: pointer;
+            margin: 0.5rem;
+            touch-action: manipulation;
+        }
+        
+        /* No special mobile media query needed - everything scales with clamp() and is mobile-first */
+        @media (min-width: 600px) {
+            .container { padding: 2rem; }
+            .question-card { padding: 2rem; }
+            .results-stats { grid-template-columns: repeat(4, 1fr); }
+            .roast-bubble { left: auto; right: 20px; bottom: 20px; max-width: 350px; }
+            .flashcard { min-height: 320px; }
+            .flashcard-face { min-height: 320px; padding: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <header class="header">
+        <div class="logo" onclick="goHome()" style="cursor: pointer;">⚔️ WÖRTER WARRIOR</div>
+        <div class="stats-bar">
+            <div class="stat-item"><span>⭐</span><span class="stat-value xp-value" id="xp-display">0 XP</span></div>
+            <div class="stat-item streak-fire" id="streak-container"><span>🎯</span><span class="stat-value streak-value" id="streak-display">0</span></div>
+            <div class="level-badge" id="level-display">Level 1</div>
+        </div>
+    </header>
+    <main class="container">
+        <!-- START SCREEN -->
+        <div class="start-screen" id="start-screen">
+            <h1>WÖRTER WARRIOR</h1>
+            <p class="subtitle">Hoofdstuk 1 - 93 woorden 📚</p>
+            
+            <!-- Mode Tabs -->
+            <div class="mode-tabs">
+                <button class="mode-tab active" onclick="switchTab('quiz')">⚔️ Quiz</button>
+                <button class="mode-tab" onclick="switchTab('flashcards')">🃏 Flashcards</button>
+            </div>
+            
+            <!-- Quiz Mode Content -->
+            <div class="mode-content active" id="quiz-content">
+                <div style="background: var(--card-bg); border-radius: 20px; padding: 1.5rem; margin: 1rem 0;">
+                    <p style="font-size: 1.1rem; line-height: 1.8;">
+                        <strong>Puntensysteem:</strong><br>
+                        🎯 <span style="color: var(--neon-green)">Perfect</span> = 10 XP + streak bonus<br>
+                        🔶 <span style="color: var(--neon-orange)">Bijna goed</span> = 5 XP<br>
+                        ❌ <span style="color: #ff3366">Fout</span> = 0 XP (woord komt terug)
+                    </p>
+                </div>
+                <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.7);">Kies je modus:</p>
+                <div class="mode-selector">
+                    <button class="mode-btn mode-nl-de" onclick="startGame('nl-de')">🇳🇱➡️🇩🇪 Nederlands → Duits</button>
+                    <button class="mode-btn mode-de-nl" onclick="startGame('de-nl')">🇩🇪➡️🇳🇱 Duits → Nederlands</button>
+                    <button class="mode-btn mode-mix" onclick="startGame('mix')">🔀 Mix (voor de pro's)</button>
+                </div>
+            </div>
+            
+            <!-- Flashcard Mode Content -->
+            <div class="mode-content" id="flashcard-content">
+                <div style="background: var(--card-bg); border-radius: 20px; padding: 1.5rem; margin: 1rem 0;">
+                    <p style="font-size: 1.1rem; line-height: 1.8;">
+                        <strong>Hoe werkt het:</strong><br>
+                        🃏 Bekijk het woord en probeer te vertalen<br>
+                        👆 Tik om de kaart om te draaien<br>
+                        ⏳ <span style="color: var(--neon-orange)">Nog niet</span> - komt later terug<br>
+                        ✅ <span style="color: var(--neon-green)">Ken ik</span> - naar de "geleerd" stapel
+                    </p>
+                </div>
+                <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.7);">Kies je richting:</p>
+                <div class="mode-selector">
+                    <button class="mode-btn mode-nl-de" onclick="startFlashcards('nl-de')">🇳🇱➡️🇩🇪 Nederlands → Duits</button>
+                    <button class="mode-btn mode-de-nl" onclick="startFlashcards('de-nl')">🇩🇪➡️🇳🇱 Duits → Nederlands</button>
+                    <button class="mode-btn mode-mix" onclick="startFlashcards('mix')">🔀 Mix (willekeurig)</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- QUIZ GAME SCREEN -->
+        <div class="game-screen" id="game-screen">
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 0%"></div></div>
+            <p class="progress-text" id="progress-text">Vraag 1 • 93 woorden</p>
+            <div class="question-card">
+                <div class="direction-badge direction-nl-de" id="direction-badge">🇳🇱 NEDERLANDS <span class="direction-arrow">➜</span> 🇩🇪 DUITS</div>
+                <div class="question-word" id="question-word">de reservering</div>
+                <input type="text" class="answer-input" id="answer-input" placeholder="Typ je antwoord..." autocomplete="off">
+                <button class="submit-btn" id="submit-btn" onclick="checkAnswer()">Check! ⚡</button>
+                <div class="feedback" id="feedback">
+                    <div class="feedback-header" id="feedback-header"></div>
+                    <div class="feedback-message" id="feedback-message"></div>
+                    <div class="feedback-detail" id="feedback-detail" style="display:none;"></div>
+                    <div class="context-sentence" id="context-sentence" style="display:none;"></div>
+                    <button class="next-btn" onclick="nextQuestion()">Volgende vraag →</button>
+                </div>
+            </div>
+            <div style="text-align:center;"><button class="stop-btn" onclick="endGame()">Stop & bekijk resultaten</button></div>
+        </div>
+        
+        <!-- FLASHCARD SCREEN -->
+        <div class="flashcard-screen" id="flashcard-screen">
+            <div class="flashcard-progress">
+                <span class="flashcard-counter" id="flashcard-counter">Kaart 1 van 93</span>
+                <div class="flashcard-piles">
+                    <span class="pile-known">✅ <span id="pile-known-count">0</span></span>
+                    <span class="pile-learning">🔄 <span id="pile-learning-count">0</span></span>
+                </div>
+            </div>
+            
+            <div class="flashcard-direction-toggle">
+                <button class="direction-toggle-btn active" id="fc-dir-nl-de" onclick="setFlashcardDirection('nl-de')">🇳🇱→🇩🇪</button>
+                <button class="direction-toggle-btn" id="fc-dir-de-nl" onclick="setFlashcardDirection('de-nl')">🇩🇪→🇳🇱</button>
+                <button class="direction-toggle-btn" id="fc-dir-mix" onclick="setFlashcardDirection('mix')">🔀 Mix</button>
+            </div>
+            
+            <div class="flashcard-container">
+                <div class="flashcard" id="flashcard" onclick="flipCard()">
+                    <div class="flashcard-face flashcard-front">
+                        <div class="flashcard-lang" id="fc-front-lang">🇳🇱 Nederlands</div>
+                        <div class="flashcard-word" id="fc-front-word">de reservering</div>
+                        <div class="flashcard-hint">Tik om te draaien</div>
+                    </div>
+                    <div class="flashcard-face flashcard-back">
+                        <div class="flashcard-lang" id="fc-back-lang">🇩🇪 Duits</div>
+                        <div class="flashcard-word" id="fc-back-word">die Reservierung</div>
+                        <div class="flashcard-context" id="fc-context">Die Reservierung wurde bestätigt.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flashcard-buttons">
+                <button class="flashcard-btn btn-later" id="btn-later" onclick="markCard('later')">⏳ Nog niet</button>
+                <button class="flashcard-btn btn-know-it" id="btn-know-it" onclick="markCard('known')">✅ Ken ik!</button>
+            </div>
+            
+            <p class="flashcard-flip-hint" id="flip-hint">👆 Tik eerst op de kaart om het antwoord te zien</p>
+            
+            <div style="text-align:center;">
+                <button class="stop-btn" onclick="endFlashcards()">Stop & bekijk resultaten</button>
+            </div>
+        </div>
+        
+        <!-- QUIZ RESULTS SCREEN -->
+        <div class="results-screen" id="results-screen">
+            <h2 class="results-header">📊 JOUW RESULTATEN</h2>
+            <div class="results-stats">
+                <div class="result-stat"><div class="result-stat-value" style="color:var(--neon-green)" id="correct-count">0</div><div class="result-stat-label">Perfect</div></div>
+                <div class="result-stat"><div class="result-stat-value" style="color:var(--neon-orange)" id="partial-count">0</div><div class="result-stat-label">Bijna goed</div></div>
+                <div class="result-stat"><div class="result-stat-value" style="color:#ff3366" id="incorrect-count">0</div><div class="result-stat-label">Fout</div></div>
+                <div class="result-stat"><div class="result-stat-value" style="color:var(--xp-gold)" id="final-xp">0</div><div class="result-stat-label">XP</div></div>
+            </div>
+            <div class="words-list correct" id="correct-words"><h3>✅ Perfect!</h3><div id="correct-words-list"></div></div>
+            <div class="words-list partial" id="partial-words"><h3>🔶 Bijna goed</h3><div id="partial-words-list"></div></div>
+            <div class="words-list incorrect" id="incorrect-words"><h3>❌ Nog oefenen</h3><div id="incorrect-words-list"></div></div>
+            <div class="tips-section"><h3>💡 Tips</h3><ul id="tips-list"></ul></div>
+            <button class="restart-btn" onclick="restartGame()">🔄 Opnieuw spelen</button>
+        </div>
+        
+        <!-- FLASHCARD RESULTS SCREEN -->
+        <div class="flashcard-results" id="flashcard-results">
+            <h2 class="flashcard-results-header">🃏 FLASHCARD RESULTATEN</h2>
+            
+            <div class="flashcard-stats">
+                <div class="flashcard-stat">
+                    <div class="flashcard-stat-value" style="color:var(--neon-green)" id="fc-known-total">0</div>
+                    <div class="flashcard-stat-label">✅ Geleerd</div>
+                </div>
+                <div class="flashcard-stat">
+                    <div class="flashcard-stat-value" style="color:var(--neon-orange)" id="fc-learning-total">0</div>
+                    <div class="flashcard-stat-label">🔄 Nog oefenen</div>
+                </div>
+            </div>
+            
+            <div id="fc-mastery-message" style="font-size: 1.2rem; margin: 1rem 0; padding: 1rem; background: var(--card-bg); border-radius: 12px;"></div>
+            
+            <div class="words-list correct" id="fc-known-words" style="display:none;">
+                <h3>✅ Geleerde woorden</h3>
+                <div id="fc-known-words-list"></div>
+            </div>
+            
+            <div class="words-list incorrect" id="fc-learning-words" style="display:none;">
+                <h3>🔄 Nog oefenen</h3>
+                <div id="fc-learning-words-list"></div>
+            </div>
+            
+            <div style="margin-top: 1.5rem;">
+                <button class="continue-learning-btn" id="continue-learning-btn" onclick="continueFlashcards()">🔄 Verder oefenen met moeilijke woorden</button>
+                <button class="restart-btn" onclick="restartFlashcards()">🔄 Opnieuw beginnen</button>
+            </div>
+        </div>
+    </main>
+    
+    <div class="xp-popup" id="xp-popup">+10 XP</div>
+    <div class="level-up-overlay" id="level-up-overlay">
+        <div class="level-up-text">🎉 LEVEL UP! 🎉</div>
+        <div class="new-level" id="new-level">2</div>
+        <div class="level-up-title" id="level-title">Receptie Rookie</div>
+        <button class="next-btn" style="margin-top:2rem" onclick="closeLevelUp()">Nice! Doorgaan →</button>
+    </div>
+    <div class="roast-bubble" id="roast-bubble">
+        <button class="close-btn" onclick="closeRoast()">✕</button>
+        <p id="roast-text"></p>
+    </div>
+
+<script>
+const vocabulary = [
+    {nl:"Geachte heer…",de:"Sehr geehrter Herr…,",alt_de:["sehr geehrter herr"],alt_nl:[],ctx:"Sehr geehrter Herr Schmidt, vielen Dank für Ihre Anfrage."},
+    {nl:"Geachte mevrouw…",de:"Sehr geehrte Frau…,",alt_de:["sehr geehrte frau"],alt_nl:[],ctx:"Sehr geehrte Frau Müller, wir bestätigen Ihre Reservierung."},
+    {nl:"Geachte dames en heren",de:"Sehr geehrte Damen und Herren",alt_de:["sehr geehrte damen und herren"],alt_nl:["geachte dames en heren"],ctx:"Sehr geehrte Damen und Herren, wir freuen uns auf Ihren Besuch."},
+    {nl:"betreft",de:"Betreff",alt_de:["der betreff"],alt_nl:["het betreft"],ctx:"Betreff: Ihre Reservierung vom 15. März"},
+    {nl:"in opdracht van",de:"im Auftrag (i.A.)",alt_de:["im auftrag","i.a."],alt_nl:[],ctx:"Im Auftrag des Direktors sende ich Ihnen die Bestätigung."},
+    {nl:"uw aanvraag",de:"Ihre Anfrage",alt_de:["die anfrage"],alt_nl:["de aanvraag"],ctx:"Vielen Dank für Ihre Anfrage bezüglich unserer Zimmerpreise."},
+    {nl:"het spijt ons",de:"es tut uns sehr Leid",alt_de:["es tut uns leid","es tut uns sehr leid"],alt_nl:["het spijt ons zeer"],ctx:"Es tut uns sehr Leid, aber wir sind ausgebucht."},
+    {nl:"te mogen begroeten",de:"begrüßen zu dürfen",alt_de:["begrussen zu durfen","begruessen zu duerfen"],alt_nl:[],ctx:"Wir freuen uns, Sie bald begrüßen zu dürfen."},
+    {nl:"met vriendelijke groet",de:"Mit freundlichen Grüßen",alt_de:["mit freundlichen grussen","mit freundlichen gruessen","mfg"],alt_nl:["met vriendelijke groeten"],ctx:"Mit freundlichen Grüßen, Ihr Hotelteam"},
+    {nl:"de FO-manager",de:"der Empfangschef",alt_de:[],alt_nl:["de front office manager","de receptiemanager","fo-manager"],ctx:"Der Empfangschef begrüßt die Gäste persönlich."},
+    {nl:"in de bijlage",de:"in der Anlage",alt_de:[],alt_nl:["als bijlage"],ctx:"In der Anlage finden Sie unsere Preisliste."},
+    {nl:"geen",de:"keine",alt_de:["kein"],alt_nl:[],ctx:"Leider haben wir keine freien Zimmer mehr."},
+    {nl:"helaas",de:"leider",alt_de:[],alt_nl:["jammer genoeg"],ctx:"Leider müssen wir Ihre Reservierung stornieren."},
+    {nl:"laatste",de:"letzten",alt_de:["letzte","letzter","letztes"],alt_nl:["de laatste","het laatste"],ctx:"In den letzten Wochen hatten wir viele Gäste."},
+    {nl:"of",de:"ob",alt_de:[],alt_nl:[],ctx:"Könnten Sie uns mitteilen, ob Sie kommen?"},
+    {nl:"al",de:"schon",alt_de:[],alt_nl:["reeds"],ctx:"Haben Sie schon reserviert?"},
+    {nl:"over",de:"über",alt_de:["uber","ueber"],alt_nl:[],ctx:"Wir informieren Sie über unsere Angebote."},
+    {nl:"van",de:"vom",alt_de:["von dem"],alt_nl:[],ctx:"Ihre E-Mail vom 10. Januar haben wir erhalten."},
+    {nl:"van tot en met",de:"vom bis zum",alt_de:["vom .. bis zum ..","vom... bis zum..."],alt_nl:["van .. tot en met ..","van... tot en met..."],ctx:"Vom 1. bis zum 7. August sind wir geöffnet."},
+    {nl:"verder",de:"weiter",alt_de:[],alt_nl:[],ctx:"Für weitere Informationen kontaktieren Sie uns."},
+    {nl:"hoe",de:"wie",alt_de:[],alt_nl:[],ctx:"Wie kann ich Ihnen helfen?"},
+    {nl:"dus",de:"also",alt_de:[],alt_nl:[],ctx:"Sie möchten also ein Doppelzimmer reservieren?"},
+    {nl:"het vertrek",de:"die Abreise",alt_de:[],alt_nl:["de afreis","vertrek"],ctx:"Die Abreise ist am Sonntag um 11 Uhr."},
+    {nl:"de aankomst",de:"die Anreise",alt_de:[],alt_nl:["aankomst"],ctx:"Die Anreise ist ab 14 Uhr möglich."},
+    {nl:"de bijlage",de:"die Anlage",alt_de:[],alt_nl:["bijlage"],ctx:"Die Anlage enthält unseren Hausprospekt."},
+    {nl:"het aanbod / de offerte",de:"das Angebot",alt_de:[],alt_nl:["het aanbod","de offerte","aanbod","offerte"],ctx:"Unser Angebot gilt bis Ende des Monats."},
+    {nl:"de annulering",de:"die Annullierung / die Stornierung",alt_de:["die annullierung","die stornierung"],alt_nl:["annulering","de stornering"],ctx:"Die Stornierung muss schriftlich erfolgen."},
+    {nl:"de annuleringskosten",de:"die Annullierungskosten",alt_de:[],alt_nl:["annuleringskosten"],ctx:"Die Annullierungskosten betragen 50 Euro."},
+    {nl:"de annuleringskosten",de:"die Rücktrittskosten",alt_de:["die rucktrittskosten"],alt_nl:["annuleringskosten"],ctx:"Die Rücktrittskosten sind in den AGB aufgeführt."},
+    {nl:"annuleren",de:"stornieren / annullieren",alt_de:["stornieren","annullieren"],alt_nl:[],ctx:"Möchten Sie die Reservierung stornieren?"},
+    {nl:"het bericht",de:"die Nachricht",alt_de:[],alt_nl:["bericht"],ctx:"Vielen Dank für Ihre Nachricht."},
+    {nl:"het verblijf",de:"der Aufenthalt",alt_de:[],alt_nl:["verblijf"],ctx:"Wir wünschen Ihnen einen angenehmen Aufenthalt."},
+    {nl:"volgeboekt",de:"ausgebucht",alt_de:[],alt_nl:["vol"],ctx:"Das Hotel ist leider ausgebucht."},
+    {nl:"voldoende",de:"ausreichend",alt_de:[],alt_nl:["genoeg"],ctx:"Wir haben ausreichend Parkplätze."},
+    {nl:"het spoedig antwoord",de:"die baldige Antwort",alt_de:[],alt_nl:["spoedig antwoord"],ctx:"Wir freuen uns auf Ihre baldige Antwort."},
+    {nl:"spoedig",de:"bald",alt_de:[],alt_nl:["snel","gauw"],ctx:"Wir hoffen, Sie bald bei uns begrüßen zu dürfen."},
+    {nl:"verzoeken",de:"bitten",alt_de:[],alt_nl:["vragen"],ctx:"Wir bitten Sie, das Formular auszufüllen."},
+    {nl:"nodig hebben",de:"brauchen",alt_de:[],alt_nl:[],ctx:"Brauchen Sie ein Kinderbett?"},
+    {nl:"gebruiken",de:"benutzen",alt_de:[],alt_nl:[],ctx:"Sie können das Schwimmbad kostenlos benutzen."},
+    {nl:"enthousiast",de:"begeistert",alt_de:[],alt_nl:[],ctx:"Die Gäste waren begeistert vom Service."},
+    {nl:"bevestigen",de:"bestätigen",alt_de:["bestatigen","bestaetigen"],alt_nl:[],ctx:"Hiermit bestätigen wir Ihre Reservierung."},
+    {nl:"de prijs",de:"der Preis",alt_de:[],alt_nl:["prijs"],ctx:"Der Preis ist inklusive Frühstück."},
+    {nl:"de kamerprijs",de:"der Zimmerpreis",alt_de:[],alt_nl:["kamerprijs"],ctx:"Der Zimmerpreis beträgt 89 Euro pro Nacht."},
+    {nl:"de tweepersoonskamer",de:"das Doppelzimmer",alt_de:[],alt_nl:["tweepersoonskamer"],ctx:"Das Doppelzimmer hat ein großes Bett."},
+    {nl:"de driepersoonskamer",de:"das Dreibettzimmer",alt_de:[],alt_nl:["driepersoonskamer"],ctx:"Das Dreibettzimmer ist ideal für Familien."},
+    {nl:"de eenpersoonskamer",de:"das Einzelzimmer",alt_de:[],alt_nl:["eenpersoonskamer"],ctx:"Das Einzelzimmer kostet 69 Euro."},
+    {nl:"huis/hotel",de:"das Haus",alt_de:[],alt_nl:["huis","hotel","het huis","het hotel"],ctx:"Unser Haus liegt zentral in der Altstadt."},
+    {nl:"het aantal personen",de:"die Personenzahl",alt_de:[],alt_nl:["aantal personen"],ctx:"Bitte geben Sie die Personenzahl an."},
+    {nl:"per persoon per nacht",de:"pro Person pro Nacht",alt_de:[],alt_nl:["p.p.p.n.","pppn"],ctx:"Der Preis ist 45 Euro pro Person pro Nacht."},
+    {nl:"de reis",de:"die Reise",alt_de:[],alt_nl:["reis"],ctx:"Wir wünschen Ihnen eine gute Reise."},
+    {nl:"de volpension/halfpension",de:"die Voll-/Halbpension",alt_de:["die vollpension","die halbpension","vollpension","halbpension"],alt_nl:["volpension","halfpension","de volpension","de halfpension"],ctx:"Halbpension beinhaltet Frühstück und Abendessen."},
+    {nl:"bevindt zich op de derde verdieping",de:"befindet sich im 3. Stock",alt_de:["befindet sich im dritten stock"],alt_nl:["bevindt zich op de 3e verdieping","is op de derde verdieping","is op de 3e verdieping"],ctx:"Das Restaurant befindet sich im 3. Stock."},
+    {nl:"de verdieping/etage",de:"der Stock",alt_de:["die etage"],alt_nl:["verdieping","etage","de verdieping","de etage"],ctx:"Ihr Zimmer ist im zweiten Stock."},
+    {nl:"op de eerste verdieping",de:"im 1. Stock",alt_de:["im ersten stock"],alt_nl:["op de 1e verdieping"],ctx:"Der Fitnessraum ist im 1. Stock."},
+    {nl:"de kamer",de:"das Zimmer",alt_de:[],alt_nl:["kamer"],ctx:"Das Zimmer ist sehr geräumig."},
+    {nl:"beschikt over",de:"verfügt über",alt_de:["verfugt uber","verfuegt ueber"],alt_nl:["heeft"],ctx:"Das Hotel verfügt über einen Wellnessbereich."},
+    {nl:"ter beschikking",de:"zur Verfügung",alt_de:["zur verfugung","zur verfuegung"],alt_nl:["beschikbaar"],ctx:"Ein Parkplatz steht zur Verfügung."},
+    {nl:"uitgerust met",de:"ausgestattet mit",alt_de:[],alt_nl:["voorzien van"],ctx:"Alle Zimmer sind ausgestattet mit Klimaanlage."},
+    {nl:"de televisie",de:"der Fernseher",alt_de:[],alt_nl:["televisie","de tv","tv"],ctx:"Der Fernseher hat internationale Kanäle."},
+    {nl:"het ontbijt",de:"das Frühstück",alt_de:["das fruhstuck","das fruehstueck"],alt_nl:["ontbijt"],ctx:"Das Frühstück wird ab 7 Uhr serviert."},
+    {nl:"het kinderbed",de:"das Kinderbett",alt_de:[],alt_nl:["kinderbed"],ctx:"Ein Kinderbett können wir gerne bereitstellen."},
+    {nl:"de airco",de:"die Klimaanlage",alt_de:[],alt_nl:["airco","de airconditioning"],ctx:"Die Klimaanlage funktioniert einwandfrei."},
+    {nl:"de ligging",de:"die Lage",alt_de:[],alt_nl:["ligging","de locatie"],ctx:"Die Lage des Hotels ist perfekt."},
+    {nl:"het balkon",de:"der Balkon",alt_de:[],alt_nl:["balkon"],ctx:"Das Zimmer hat einen schönen Balkon."},
+    {nl:"het bad",de:"das Bad",alt_de:[],alt_nl:["bad","de badkamer"],ctx:"Das Bad ist modern eingerichtet."},
+    {nl:"de douche",de:"die Dusche",alt_de:[],alt_nl:["douche"],ctx:"Die Dusche hat einen Regenkopf."},
+    {nl:"de lift",de:"der Aufzug",alt_de:[],alt_nl:["lift"],ctx:"Der Aufzug befindet sich am Ende des Flurs."},
+    {nl:"de parkeermogelijkheden",de:"die Parkmöglichkeiten",alt_de:["die parkmoglichkeiten"],alt_nl:["parkeermogelijkheden"],ctx:"Fragen Sie nach den Parkmöglichkeiten."},
+    {nl:"het zwembad",de:"das Schwimmbad",alt_de:[],alt_nl:["zwembad"],ctx:"Das Schwimmbad ist beheizt."},
+    {nl:"de prijslijst",de:"die Preisliste",alt_de:[],alt_nl:["prijslijst"],ctx:"Die Preisliste finden Sie in der Anlage."},
+    {nl:"de hotelprospectus",de:"der Hausprospekt",alt_de:[],alt_nl:["hotelprospectus","de brochure"],ctx:"Im Hausprospekt finden Sie alle Informationen."},
+    {nl:"de toilet",de:"die Toilette",alt_de:[],alt_nl:["toilet","het toilet","de wc","wc"],ctx:"Die Toilette ist separat."},
+    {nl:"het uitzicht",de:"die Aussicht",alt_de:[],alt_nl:["uitzicht"],ctx:"Die Aussicht vom Balkon ist wunderschön."},
+    {nl:"met mooi uitzicht op",de:"mit schönem Blick auf",alt_de:["mit schonem blick auf"],alt_nl:["met een mooi uitzicht op"],ctx:"Das Zimmer hat einen schönen Blick auf die Berge."},
+    {nl:"de oude binnenstad",de:"die Altstadt",alt_de:[],alt_nl:["oude binnenstad"],ctx:"Die Altstadt ist zu Fuß erreichbar."},
+    {nl:"de logies",de:"die Unterkunft",alt_de:[],alt_nl:["logies","de accommodatie"],ctx:"Die Unterkunft ist gemütlich eingerichtet."},
+    {nl:"in de buurt",de:"in der Nähe",alt_de:["in der nahe"],alt_nl:["dichtbij"],ctx:"In der Nähe gibt es viele Restaurants."},
+    {nl:"inclusief",de:"inklusiv",alt_de:["inklusive"],alt_nl:["inbegrepen"],ctx:"Der Preis ist inklusiv Frühstück."},
+    {nl:"de kosten",de:"die Kosten",alt_de:[],alt_nl:["kosten"],ctx:"Die Kosten werden am Ende berechnet."},
+    {nl:"de toeristenbelasting",de:"die Kurtaxe",alt_de:[],alt_nl:["toeristenbelasting"],ctx:"Die Kurtaxe beträgt 2,50 Euro pro Person."},
+    {nl:"de BTW",de:"die Mehrwertsteuer",alt_de:["die mwst","mwst"],alt_nl:["btw"],ctx:"Die Mehrwertsteuer ist im Preis enthalten."},
+    {nl:"reserveren",de:"reservieren",alt_de:[],alt_nl:[],ctx:"Möchten Sie ein Zimmer reservieren?"},
+    {nl:"gereserveerd",de:"reserviert",alt_de:[],alt_nl:[],ctx:"Das Zimmer ist bereits reserviert."},
+    {nl:"de reservering",de:"die Reservierung",alt_de:[],alt_nl:["reservering"],ctx:"Die Reservierung wurde bestätigt."},
+    {nl:"de reserveringsbevestiging",de:"die Reservierungsbestätigung",alt_de:["die reservierungsbestatigung"],alt_nl:["reserveringsbevestiging"],ctx:"Die Reservierungsbestätigung senden wir per E-Mail."},
+    {nl:"het hoofd reserveringen",de:"der Reservierungsleiter",alt_de:[],alt_nl:["de reserveringsmanager"],ctx:"Der Reservierungsleiter hilft Ihnen gerne."},
+    {nl:"bevestigen",de:"bestätigen",alt_de:["bestatigen","bestaetigen"],alt_nl:[],ctx:"Wir bestätigen Ihre Buchung hiermit."},
+    {nl:"vanzelfsprekend",de:"selbstverständlich",alt_de:["selbstverstandlich"],alt_nl:["natuurlijk","uiteraard"],ctx:"Selbstverständlich helfen wir Ihnen gerne."},
+    {nl:"zich verheugen",de:"sich freuen",alt_de:[],alt_nl:["verheugen"],ctx:"Wir freuen uns auf Ihren Besuch."},
+    {nl:"wij verheugen ons op",de:"wir freuen uns auf",alt_de:[],alt_nl:["we verheugen ons op"],ctx:"Wir freuen uns auf Ihre Antwort."},
+    {nl:"hopelijk",de:"hoffentlich",alt_de:[],alt_nl:[],ctx:"Hoffentlich können wir Ihnen helfen."},
+    {nl:"de badkuip",de:"die Badewanne",alt_de:[],alt_nl:["badkuip"],ctx:"Das Badezimmer hat eine große Badewanne."},
+    {nl:"in ons hotel",de:"in unserem Hotel",alt_de:[],alt_nl:[],ctx:"In unserem Hotel fühlen Sie sich wie zu Hause."}
+];
+
+const levelTitles = ["Receptie Rookie","Bagagedrager","Portier in Training","Kamermeisje/jongen","Reserverings Rebel","Front Office Fighter","Concierge Kampioen","Guest Relations Guru","Hotelmanager","Gastvrij Genie","Duits Diplomaat","WÖRTER WARRIOR ELITE"];
+const roastWrong = ["Oeps! 😅 Dit woord komt straks terug.","Niet helemaal... Schrijf het 3x over!","Hmm, lastig! Kijk goed naar het woord.","Foutje! Van fouten leer je 💪","Deze moet je stampen!","Probeer het hardop te zeggen!"];
+const roastPartial = ["Bijna! Let op der/die/das 🎯","Check de spelling of het lidwoord.","Klein foutje in de details!","Let op Umlaute: ä, ö, ü!","Zo dichtbij! Lidwoorden zijn belangrijk."];
+const praiseMsg = ["BOOM! 💥 Perfect!","Ja! Helemaal goed! 🎯","On fire! 🔥","Ausgezeichnet!","Genau richtig! 👏","Top! ✨","Weiter so! 💪","Sehr gut!"];
+
+// ============ QUIZ GAME STATE ============
+let gs = {mode:'mix',xp:0,streak:0,maxStreak:0,level:1,qNum:0,correct:[],partial:[],incorrect:[],curWord:null,curDir:'nl-de',weights:{},answered:false};
+vocabulary.forEach((_,i)=>{gs.weights[i]=1;});
+
+// ============ FLASHCARD STATE ============
+let fc = {
+    direction: 'nl-de',
+    currentIndex: 0,
+    deck: [],
+    known: [],
+    learning: [],
+    flipped: false,
+    originalDeck: []
+};
+
+// ============ NAVIGATION ============
+function goHome() {
+    // Hide all screens
+    document.getElementById('game-screen').classList.remove('active');
+    document.getElementById('results-screen').classList.remove('active');
+    document.getElementById('flashcard-screen').classList.remove('active');
+    document.getElementById('flashcard-results').classList.remove('active');
+    
+    // Show start screen
+    document.getElementById('start-screen').style.display = 'block';
+    
+    closeRoast();
+}
+
+// ============ TAB SWITCHING ============
+function switchTab(tab) {
+    document.querySelectorAll('.mode-tab').forEach((t, i) => {
+        t.classList.toggle('active', (tab === 'quiz' && i === 0) || (tab === 'flashcards' && i === 1));
+    });
+    document.getElementById('quiz-content').classList.toggle('active', tab === 'quiz');
+    document.getElementById('flashcard-content').classList.toggle('active', tab === 'flashcards');
+}
+
+// ============ QUIZ FUNCTIONS ============
+function norm(s){return s.toLowerCase().trim().replace(/\.+/g,' ').replace(/\s+/g,' ').replace(/[,!?;:…]+/g,'').trim();}
+function normStrict(s){return norm(s).replace(/^(der|die|das|de|het|een)\s+/i,'').replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss');}
+function normOrd(s){return s.replace(/(\d+)e\b/g,(_,n)=>['','eerste','tweede','derde','vierde','vijfde'][n]||n+'e').replace(/(\d+)\.\s*/g,(_,n)=>['','ersten','zweiten','dritten'][n]||n+'. ');}
+
+function checkMatch(user,correct,alts){
+    let uN=norm(user),cN=norm(correct),uS=normStrict(user),cS=normStrict(correct);
+    if(uN===cN)return{t:'correct'};
+    for(let a of alts){if(uN===norm(a)||uS===normStrict(a))return{t:'correct'};}
+    if(normOrd(uN)===normOrd(cN))return{t:'correct'};
+    if(uS===cS&&uN!==cN)return{t:'partial',d:'Let op het lidwoord! der (m), die (v), das (o)'};
+    let uU=user.toLowerCase().replace(/ae/g,'ä').replace(/oe/g,'ö').replace(/ue/g,'ü');
+    if(norm(uU)===cN)return{t:'partial',d:'Gebruik Umlaut: ä, ö, ü'};
+    let uSS=user.toLowerCase().replace(/ss/g,'ß');
+    if(norm(uSS)===cN)return{t:'partial',d:'In het Duits: ß i.p.v. ss'};
+    let dist=leven(uS,cS);
+    if(dist<=2&&dist>0&&uS.length>3)return{t:'partial',d:'Kleine spelfout!'};
+    if(uN.toLowerCase()===cN.toLowerCase()&&uN!==cN)return{t:'partial',d:'Hoofdletters bij zelfstandige naamwoorden!'};
+    return{t:'incorrect'};
+}
+
+function leven(a,b){
+    let m=a.length,n=b.length,dp=Array(m+1).fill(null).map(()=>Array(n+1).fill(0));
+    for(let i=0;i<=m;i++)dp[i][0]=i;
+    for(let j=0;j<=n;j++)dp[0][j]=j;
+    for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:Math.min(dp[i-1][j-1],dp[i-1][j],dp[i][j-1])+1;
+    return dp[m][n];
+}
+
+function getRandWord(){
+    let tot=Object.values(gs.weights).reduce((a,b)=>a+b,0),r=Math.random()*tot,c=0;
+    for(let i=0;i<vocabulary.length;i++){c+=gs.weights[i];if(r<=c)return{w:vocabulary[i],i};}
+    return{w:vocabulary[0],i:0};
+}
+function getDir(){return gs.mode==='nl-de'?'nl-de':gs.mode==='de-nl'?'de-nl':Math.random()<0.5?'nl-de':'de-nl';}
+function calcXP(t,s){return t==='incorrect'?0:t==='partial'?5:10+Math.min(s*2,20);}
+function getLevel(x){const th=[0,50,120,220,350,520,730,980,1280,1630,2030,2500];for(let i=th.length-1;i>=0;i--)if(x>=th[i])return i+1;return 1;}
+
+function showXP(amt,part=false){
+    const p=document.getElementById('xp-popup');
+    p.textContent=`+${amt} XP`;p.className='xp-popup'+(part?' partial':'');p.classList.add('show');
+    setTimeout(()=>p.classList.remove('show'),1000);
+}
+function showLevelUp(lv){
+    document.getElementById('new-level').textContent=lv;
+    document.getElementById('level-title').textContent=levelTitles[Math.min(lv-1,levelTitles.length-1)];
+    document.getElementById('level-up-overlay').classList.add('show');
+}
+function closeLevelUp(){document.getElementById('level-up-overlay').classList.remove('show');}
+function showRoast(m){document.getElementById('roast-text').textContent=m;document.getElementById('roast-bubble').classList.add('show');}
+function closeRoast(){document.getElementById('roast-bubble').classList.remove('show');}
+
+function updateStats(){
+    document.getElementById('xp-display').textContent=gs.xp+' XP';
+    document.getElementById('streak-display').textContent=gs.streak;
+    document.getElementById('level-display').textContent='Level '+gs.level;
+    document.getElementById('streak-container').classList.toggle('on-fire',gs.streak>=3);
+    const th=[0,50,120,220,350,520,730,980,1280,1630,2030,2500];
+    let cur=th[gs.level-1]||0,nxt=th[gs.level]||th[th.length-1];
+    document.getElementById('progress-fill').style.width=Math.min(((gs.xp-cur)/(nxt-cur))*100,100)+'%';
+    document.getElementById('progress-text').textContent=`Vraag ${gs.qNum+1} • ${gs.xp}/${nxt} XP`;
+}
+
+function displayQuestion(){
+    const{w,i}=getRandWord();
+    gs.curWord={...w,idx:i};gs.curDir=getDir();gs.answered=false;
+    document.getElementById('feedback').className='feedback';
+    document.getElementById('feedback-detail').style.display='none';
+    document.getElementById('context-sentence').style.display='none';
+    document.getElementById('submit-btn').disabled=false;
+    const inp=document.getElementById('answer-input');inp.value='';inp.disabled=false;inp.focus();
+    closeRoast();
+    const badge=document.getElementById('direction-badge');
+    if(gs.curDir==='nl-de'){
+        document.getElementById('question-word').textContent=w.nl;
+        badge.innerHTML='🇳🇱 NEDERLANDS <span class="direction-arrow">➜</span> 🇩🇪 DUITS';
+        badge.className='direction-badge direction-nl-de';
+        inp.placeholder='Typ het Duitse woord (met lidwoord)...';
+    }else{
+        document.getElementById('question-word').textContent=w.de;
+        badge.innerHTML='🇩🇪 DUITS <span class="direction-arrow">➜</span> 🇳🇱 NEDERLANDS';
+        badge.className='direction-badge direction-de-nl';
+        inp.placeholder='Typ het Nederlandse woord...';
+    }
+}
+
+function checkAnswer(){
+    if(gs.answered)return;
+    const inp=document.getElementById('answer-input'),user=inp.value.trim();
+    if(!user)return;
+    gs.answered=true;gs.qNum++;
+    const correct=gs.curDir==='nl-de'?gs.curWord.de:gs.curWord.nl;
+    const alts=gs.curDir==='nl-de'?gs.curWord.alt_de:gs.curWord.alt_nl;
+    const res=checkMatch(user,correct,alts);
+    const fb=document.getElementById('feedback'),fh=document.getElementById('feedback-header');
+    const fm=document.getElementById('feedback-message'),fd=document.getElementById('feedback-detail');
+    const fc=document.getElementById('context-sentence');
+    document.getElementById('submit-btn').disabled=true;inp.disabled=true;
+    const pair=`${gs.curWord.nl} = ${gs.curWord.de}`;
+    
+    if(res.t==='correct'){
+        gs.streak++;gs.maxStreak=Math.max(gs.maxStreak,gs.streak);
+        const xp=calcXP('correct',gs.streak),oldLv=gs.level;
+        gs.xp+=xp;gs.level=getLevel(gs.xp);
+        gs.weights[gs.curWord.idx]=Math.max(0.3,gs.weights[gs.curWord.idx]-0.3);
+        if(!gs.correct.includes(pair))gs.correct.push(pair);
+        gs.partial=gs.partial.filter(x=>x!==pair);gs.incorrect=gs.incorrect.filter(x=>x!==pair);
+        fb.className='feedback correct';
+        fh.innerHTML='✅ '+praiseMsg[Math.floor(Math.random()*praiseMsg.length)];
+        fm.innerHTML=gs.streak>=3?`<span style="color:var(--xp-gold)">🔥 ${gs.streak}x Streak! +${xp} XP</span>`:`+${xp} XP`;
+        fd.style.display='none';fc.style.display='none';
+        showXP(xp);
+        if(gs.level>oldLv)setTimeout(()=>showLevelUp(gs.level),500);
+    }else if(res.t==='partial'){
+        gs.xp+=5;gs.streak=0;
+        gs.weights[gs.curWord.idx]=Math.min(2,gs.weights[gs.curWord.idx]+0.2);
+        if(!gs.partial.includes(pair)&&!gs.correct.includes(pair))gs.partial.push(pair);
+        fb.className='feedback partial';
+        fh.innerHTML='🔶 Bijna goed! +5 XP';
+        fm.innerHTML=`Jouw: <em>${user}</em><br>Correct: <span class="correct-answer">${correct}</span>`;
+        fd.innerHTML=`<strong>💡</strong> ${res.d}`;fd.style.display='block';
+        fc.textContent='📝 '+gs.curWord.ctx;fc.style.display='block';
+        showXP(5,true);showRoast(roastPartial[Math.floor(Math.random()*roastPartial.length)]);
+    }else{
+        gs.streak=0;
+        gs.weights[gs.curWord.idx]=Math.min(3,gs.weights[gs.curWord.idx]+0.5);
+        if(!gs.incorrect.includes(pair))gs.incorrect.push(pair);
+        gs.correct=gs.correct.filter(x=>x!==pair);gs.partial=gs.partial.filter(x=>x!==pair);
+        fb.className='feedback incorrect';
+        fh.innerHTML='❌ Helaas!';
+        fm.innerHTML=`Jouw: <em>${user}</em><br>Correct: <span class="correct-answer">${correct}</span>`;
+        fd.style.display='none';
+        fc.textContent='📝 '+gs.curWord.ctx;fc.style.display='block';
+        showRoast(roastWrong[Math.floor(Math.random()*roastWrong.length)]);
+    }
+    updateStats();
+}
+
+function nextQuestion(){displayQuestion();}
+function startGame(mode){
+    gs.mode=mode;
+    document.getElementById('start-screen').style.display='none';
+    document.getElementById('game-screen').classList.add('active');
+    displayQuestion();updateStats();
+}
+function endGame(){
+    document.getElementById('game-screen').classList.remove('active');
+    document.getElementById('results-screen').classList.add('active');
+    closeRoast();
+    document.getElementById('correct-count').textContent=gs.correct.length;
+    document.getElementById('partial-count').textContent=gs.partial.length;
+    document.getElementById('incorrect-count').textContent=gs.incorrect.length;
+    document.getElementById('final-xp').textContent=gs.xp;
+    document.getElementById('correct-words').style.display=gs.correct.length?'block':'none';
+    document.getElementById('correct-words-list').innerHTML=gs.correct.map(w=>`<div class="word-item">${w}</div>`).join('');
+    document.getElementById('partial-words').style.display=gs.partial.length?'block':'none';
+    document.getElementById('partial-words-list').innerHTML=gs.partial.map(w=>`<div class="word-item">${w}</div>`).join('');
+    document.getElementById('incorrect-words').style.display=gs.incorrect.length?'block':'none';
+    document.getElementById('incorrect-words-list').innerHTML=gs.incorrect.map(w=>`<div class="word-item">${w}</div>`).join('');
+    let tips=[];
+    if(gs.partial.length>3)tips.push('💡 <strong>Lidwoorden:</strong> der/die/das - leer ze met het woord!');
+    if(gs.incorrect.length>gs.correct.length)tips.push('📝 Schrijf foute woorden 5x over');
+    if(gs.maxStreak>=5)tips.push(`🔥 Mooie streak van ${gs.maxStreak}!`);
+    tips.push('🇩🇪 Umlaute (ä,ö,ü) zijn belangrijk!');
+    tips.push('📚 15 min/dag > 2 uur/week');
+    document.getElementById('tips-list').innerHTML=tips.slice(0,4).map(t=>`<li>${t}</li>`).join('');
+}
+function restartGame(){
+    gs.streak=0;gs.qNum=0;gs.correct=[];gs.partial=[];gs.incorrect=[];gs.answered=false;
+    vocabulary.forEach((_,i)=>{gs.weights[i]=Math.max(1,gs.weights[i]*0.7);});
+    document.getElementById('results-screen').classList.remove('active');
+    document.getElementById('start-screen').style.display='block';
+    updateStats();
+}
+
+// ============ FLASHCARD FUNCTIONS ============
+function shuffleArray(arr) {
+    const shuffled = [...arr];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+function startFlashcards(direction) {
+    fc.direction = direction;
+    fc.currentIndex = 0;
+    fc.deck = shuffleArray([...vocabulary]);
+    fc.originalDeck = [...fc.deck];
+    fc.known = [];
+    fc.learning = [];
+    fc.flipped = false;
+    
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('flashcard-screen').classList.add('active');
+    
+    // Update direction toggle buttons
+    document.querySelectorAll('.direction-toggle-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`fc-dir-${direction}`).classList.add('active');
+    
+    displayFlashcard();
+    updateFlashcardUI();
+}
+
+function setFlashcardDirection(direction) {
+    fc.direction = direction;
+    document.querySelectorAll('.direction-toggle-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`fc-dir-${direction}`).classList.add('active');
+    
+    // Re-display current card with new direction
+    if (fc.flipped) {
+        document.getElementById('flashcard').classList.remove('flipped');
+        fc.flipped = false;
+    }
+    displayFlashcard();
+}
+
+function getCardDirection() {
+    if (fc.direction === 'mix') {
+        return Math.random() < 0.5 ? 'nl-de' : 'de-nl';
+    }
+    return fc.direction;
+}
+
+function displayFlashcard() {
+    if (fc.currentIndex >= fc.deck.length) {
+        endFlashcards();
+        return;
+    }
+    
+    const word = fc.deck[fc.currentIndex];
+    const dir = getCardDirection();
+    
+    // Store current direction for this card
+    fc.currentCardDir = dir;
+    
+    const frontLang = dir === 'nl-de' ? '🇳🇱 Nederlands' : '🇩🇪 Duits';
+    const backLang = dir === 'nl-de' ? '🇩🇪 Duits' : '🇳🇱 Nederlands';
+    const frontWord = dir === 'nl-de' ? word.nl : word.de;
+    const backWord = dir === 'nl-de' ? word.de : word.nl;
+    
+    document.getElementById('fc-front-lang').textContent = frontLang;
+    document.getElementById('fc-front-word').textContent = frontWord;
+    document.getElementById('fc-back-lang').textContent = backLang;
+    document.getElementById('fc-back-word').textContent = backWord;
+    document.getElementById('fc-context').textContent = word.ctx;
+    
+    // Reset card state - always show front first
+    const card = document.getElementById('flashcard');
+    card.classList.remove('flipped');
+    fc.flipped = false;
+    
+    // Buttons always enabled - can click from both sides
+    document.getElementById('btn-later').disabled = false;
+    document.getElementById('btn-know-it').disabled = false;
+    document.getElementById('flip-hint').style.display = 'block';
+}
+
+function flipCard() {
+    const card = document.getElementById('flashcard');
+    card.classList.toggle('flipped');
+    fc.flipped = !fc.flipped;
+    
+    if (fc.flipped) {
+        document.getElementById('flip-hint').style.display = 'none';
+    } else {
+        document.getElementById('flip-hint').style.display = 'block';
+    }
+}
+
+function markCard(status) {
+    const word = fc.deck[fc.currentIndex];
+    const pair = `${word.nl} = ${word.de}`;
+    
+    // First flip card back to front if it's flipped
+    const card = document.getElementById('flashcard');
+    const wasFlipped = fc.flipped;
+    
+    if (wasFlipped) {
+        card.classList.remove('flipped');
+        fc.flipped = false;
+    }
+    
+    // Disable buttons during transition
+    document.getElementById('btn-later').disabled = true;
+    document.getElementById('btn-know-it').disabled = true;
+    
+    if (status === 'known') {
+        // Ken ik - naar de geleerd stapel
+        fc.known.push(pair);
+        fc.currentIndex++;
+    } else if (status === 'later') {
+        // Nog niet - random terug in de stack
+        const currentWord = fc.deck.splice(fc.currentIndex, 1)[0];
+        // Plaats op een random positie NA de huidige positie
+        const remainingCards = fc.deck.length - fc.currentIndex;
+        if (remainingCards > 0) {
+            const randomOffset = Math.floor(Math.random() * remainingCards) + 1;
+            const insertPosition = fc.currentIndex + randomOffset;
+            fc.deck.splice(insertPosition, 0, currentWord);
+        } else {
+            // Als dit de laatste kaart is, voeg toe aan het einde
+            fc.deck.push(currentWord);
+        }
+        // currentIndex blijft hetzelfde (we tonen de volgende kaart die opgeschoven is)
+    }
+    
+    updateFlashcardUI();
+    
+    // Wait for flip animation to complete before showing next card
+    const delay = wasFlipped ? 350 : 150;
+    setTimeout(() => {
+        displayFlashcard();
+    }, delay);
+}
+
+function updateFlashcardUI() {
+    const total = fc.deck.length;
+    const current = Math.min(fc.currentIndex + 1, total);
+    
+    document.getElementById('flashcard-counter').textContent = `Kaart ${current} van ${total}`;
+    document.getElementById('pile-known-count').textContent = fc.known.length;
+    document.getElementById('pile-learning-count').textContent = fc.learning.length;
+}
+
+function endFlashcards() {
+    document.getElementById('flashcard-screen').classList.remove('active');
+    document.getElementById('flashcard-results').classList.add('active');
+    
+    document.getElementById('fc-known-total').textContent = fc.known.length;
+    document.getElementById('fc-learning-total').textContent = '0';
+    
+    // Mastery message
+    const message = '🏆 Goed gedaan! Je hebt alle ' + fc.known.length + ' woorden geoefend!';
+    document.getElementById('fc-mastery-message').innerHTML = message;
+    
+    // Known words list
+    if (fc.known.length > 0) {
+        document.getElementById('fc-known-words').style.display = 'block';
+        document.getElementById('fc-known-words-list').innerHTML = fc.known.map(w => `<div class="word-item">${w}</div>`).join('');
+    } else {
+        document.getElementById('fc-known-words').style.display = 'none';
+    }
+    
+    // Hide learning section - no longer used
+    document.getElementById('fc-learning-words').style.display = 'none';
+    document.getElementById('continue-learning-btn').style.display = 'none';
+}
+
+function continueFlashcards() {
+    // Create new deck from learning words only
+    const learningWords = fc.learning.map(pair => {
+        const [nl] = pair.split(' = ');
+        return vocabulary.find(v => v.nl === nl);
+    }).filter(Boolean);
+    
+    if (learningWords.length === 0) {
+        restartFlashcards();
+        return;
+    }
+    
+    fc.deck = shuffleArray(learningWords);
+    fc.currentIndex = 0;
+    fc.known = [];
+    fc.learning = [];
+    fc.flipped = false;
+    
+    document.getElementById('flashcard-results').classList.remove('active');
+    document.getElementById('flashcard-screen').classList.add('active');
+    
+    displayFlashcard();
+    updateFlashcardUI();
+}
+
+function restartFlashcards() {
+    fc.deck = shuffleArray([...vocabulary]);
+    fc.currentIndex = 0;
+    fc.known = [];
+    fc.learning = [];
+    fc.flipped = false;
+    
+    document.getElementById('flashcard-results').classList.remove('active');
+    document.getElementById('start-screen').style.display = 'block';
+}
+
+// ============ EVENT LISTENERS ============
+document.getElementById('answer-input').addEventListener('keypress', e => {
+    if (e.key === 'Enter') {
+        gs.answered ? nextQuestion() : checkAnswer();
+    }
+});
+
+// Keyboard support for flashcards
+document.addEventListener('keydown', e => {
+    if (!document.getElementById('flashcard-screen').classList.contains('active')) return;
+    
+    if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        flipCard();
+    } else if (e.key === 'ArrowLeft' || e.key === '1') {
+        markCard('later');
+    } else if (e.key === 'ArrowRight' || e.key === '2') {
+        markCard('known');
+    }
+});
+
+updateStats();
+</script>
+</body>
+</html>
