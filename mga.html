@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mutual Gains Approach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --prussian: #0C3251;
+  --prussian-mid: #1A4A72;
+  --slate: #4A7FA5;
+  --slate-light: #7AACCF;
+  --amber: #D4820A;
+  --amber-light: #F0A830;
+  --forest: #1E6B52;
+  --forest-light: #2A9470;
+  --ground: #E9EDF0;
+  --ground-alt: #D8DFE5;
+  --surface: #FFFFFF;
+  --ink: #0C1E2D;
+  --ink-mid: #2E4A60;
+  --ink-soft: #5A7A94;
+  --border: #C4CDD6;
+  --correct-bg: #E8F5EE;
+  --correct-border: #1E6B52;
+  --wrong-bg: #FCECEA;
+  --wrong-border: #C03A2B;
+  --neutral-bg: #EEF3F8;
+  --neutral-border: #4A7FA5;
+  --tag-bg: rgba(74, 127, 165, 0.12);
+
+  --f-display: 'Cormorant', 'Georgia', serif;
+  --f-body: 'Outfit', system-ui, sans-serif;
+  --space-xs: 0.375rem;
+  --space-sm: 0.75rem;
+  --space-md: 1.25rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --radius: 10px;
+  --radius-lg: 18px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --prussian: #5B9DC5;
+    --prussian-mid: #4A87B0;
+    --slate: #7AACCF;
+    --slate-light: #9ECAE3;
+    --amber: #F0A830;
+    --amber-light: #F5C060;
+    --forest: #2A9470;
+    --forest-light: #38BF90;
+    --ground: #0A1E2D;
+    --ground-alt: #0F2840;
+    --surface: #132535;
+    --ink: #E4EDF5;
+    --ink-mid: #B0CADE;
+    --ink-soft: #6A97B8;
+    --border: #1E3D57;
+    --correct-bg: #0D2D1E;
+    --correct-border: #2A9470;
+    --wrong-bg: #2D110D;
+    --wrong-border: #E05040;
+    --neutral-bg: #0D2035;
+    --neutral-border: #4A7FA5;
+    --tag-bg: rgba(74, 127, 165, 0.2);
+  }
+}
+:root[data-theme="dark"] {
+  --prussian: #5B9DC5;
+  --prussian-mid: #4A87B0;
+  --slate: #7AACCF;
+  --slate-light: #9ECAE3;
+  --amber: #F0A830;
+  --amber-light: #F5C060;
+  --forest: #2A9470;
+  --forest-light: #38BF90;
+  --ground: #0A1E2D;
+  --ground-alt: #0F2840;
+  --surface: #132535;
+  --ink: #E4EDF5;
+  --ink-mid: #B0CADE;
+  --ink-soft: #6A97B8;
+  --border: #1E3D57;
+  --correct-bg: #0D2D1E;
+  --correct-border: #2A9470;
+  --wrong-bg: #2D110D;
+  --wrong-border: #E05040;
+  --neutral-bg: #0D2035;
+  --neutral-border: #4A7FA5;
+  --tag-bg: rgba(74, 127, 165, 0.2);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--f-body);
+  background: var(--ground);
+  color: var(--ink);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ── LAYOUT ── */
+.app-shell {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  background: var(--prussian);
+  color: #E4EDF5;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-lg) 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  padding: 0 var(--space-lg) var(--space-lg);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  margin-bottom: var(--space-md);
+}
+
+.sidebar-logo .wordmark {
+  font-family: var(--f-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.sidebar-logo .sub {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+}
+
+.nav-section-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  padding: 0 var(--space-lg);
+  margin-bottom: 0.4rem;
+  margin-top: var(--space-md);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem var(--space-lg);
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.65);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  border-left: 3px solid transparent;
+}
+
+.nav-item:hover { background: rgba(255,255,255,0.08); color: white; }
+.nav-item.active {
+  background: rgba(255,255,255,0.12);
+  color: white;
+  border-left-color: var(--amber);
+  font-weight: 600;
+}
+
+.nav-item .nav-icon {
+  width: 20px;
+  text-align: center;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.nav-item .nav-check {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: var(--forest-light);
+}
+
+.sidebar-progress {
+  margin-top: auto;
+  padding: var(--space-md) var(--space-lg);
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+
+.progress-label {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 0.4rem;
+}
+
+.progress-bar-outer {
+  background: rgba(255,255,255,0.12);
+  border-radius: 100px;
+  height: 6px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--amber);
+  border-radius: 100px;
+  transition: width 0.5s ease;
+}
+
+.progress-pct {
+  font-size: 0.75rem;
+  color: var(--amber-light);
+  margin-top: 0.3rem;
+  font-weight: 600;
+}
+
+/* ── MAIN CONTENT ── */
+.main-content {
+  overflow-y: auto;
+  min-height: 100vh;
+}
+
+.section {
+  display: none;
+  padding: var(--space-xl) var(--space-xl);
+  max-width: 840px;
+  animation: fadein 0.25s ease;
+}
+.section.active { display: block; }
+
+@keyframes fadein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── TYPOGRAPHY ── */
+.eyebrow {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 0.5rem;
+}
+
+h1.display {
+  font-family: var(--f-display);
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--ink);
+  text-wrap: balance;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-md);
+}
+
+h1.display em { font-style: italic; color: var(--prussian); }
+
+h2.section-title {
+  font-family: var(--f-display);
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--ink);
+  text-wrap: balance;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.6rem;
+}
+
+h3 {
+  font-family: var(--f-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+}
+
+.lead {
+  font-size: 1.05rem;
+  color: var(--ink-mid);
+  max-width: 600px;
+  margin-bottom: var(--space-lg);
+  line-height: 1.7;
+}
+
+p { line-height: 1.7; color: var(--ink-mid); margin-bottom: 0.75rem; }
+p:last-child { margin-bottom: 0; }
+
+strong { color: var(--ink); font-weight: 600; }
+
+/* ── COMPONENTS ── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: var(--space-lg) 0;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  background: var(--tag-bg);
+  color: var(--slate);
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+.card-sm {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+}
+
+/* Principle Cards */
+.principle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-md);
+  margin: var(--space-lg) 0;
+}
+
+.principle-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  cursor: pointer;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.principle-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px;
+  height: 100%;
+}
+
+.principle-card.p1::before { background: var(--slate); }
+.principle-card.p2::before { background: var(--amber); }
+.principle-card.p3::before { background: var(--forest); }
+.principle-card.p4::before { background: var(--prussian-mid); }
+.principle-card.batna::before { background: #C03A2B; }
+
+.principle-card:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  border-color: var(--slate-light);
+}
+
+.principle-number {
+  font-family: var(--f-display);
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--border);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.principle-card h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.4rem;
+}
+
+.principle-card p {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* Detail panel */
+.principle-detail {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-top: var(--space-md);
+  animation: fadein 0.25s ease;
+}
+
+.principle-detail.open { display: block; }
+
+.detail-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.detail-stripe {
+  width: 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+/* Iceberg viz */
+.iceberg-wrap {
+  background: var(--ground-alt);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin: var(--space-lg) 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.iceberg-water {
+  position: absolute;
+  left: 0; right: 0;
+  top: 50%;
+  bottom: 0;
+  background: rgba(74, 127, 165, 0.08);
+  border-top: 2px dashed rgba(74,127,165,0.35);
+}
+
+.iceberg-inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 0;
+}
+
+.iceberg-above {
+  padding: var(--space-md) var(--space-lg);
+  text-align: center;
+}
+
+.iceberg-below {
+  padding: var(--space-md) var(--space-lg);
+  text-align: center;
+  padding-top: var(--space-lg);
+}
+
+.iceberg-label {
+  font-family: var(--f-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.iceberg-above .iceberg-label { color: var(--prussian); }
+.iceberg-below .iceberg-label { color: var(--slate); }
+
+.iceberg-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+}
+
+.iceberg-chip {
+  padding: 0.25rem 0.7rem;
+  border-radius: 100px;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.iceberg-above .iceberg-chip {
+  background: var(--prussian);
+  color: white;
+}
+
+.iceberg-below .iceberg-chip {
+  background: rgba(74,127,165,0.2);
+  color: var(--ink-mid);
+  border: 1px solid rgba(74,127,165,0.4);
+}
+
+.water-label {
+  position: absolute;
+  right: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  z-index: 2;
+}
+
+/* Split comparison */
+.split-compare {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--space-sm);
+  align-items: start;
+  margin: var(--space-md) 0;
+}
+
+.compare-side {
+  background: var(--ground-alt);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+}
+
+.compare-side.left { border-right: 3px solid var(--border); }
+.compare-side.right { border-left: 3px solid var(--amber); }
+
+.compare-vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--f-display);
+  font-size: 1.3rem;
+  font-style: italic;
+  color: var(--ink-soft);
+  padding-top: 1rem;
+}
+
+.compare-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.compare-side.left .compare-label { color: var(--ink-soft); }
+.compare-side.right .compare-label { color: var(--amber); }
+
+.compare-item {
+  font-size: 0.88rem;
+  color: var(--ink-mid);
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+
+.compare-item:last-child { border-bottom: none; }
+.compare-item::before { content: '—'; color: var(--border); flex-shrink: 0; }
+
+/* Examples box */
+.example-box {
+  background: var(--neutral-bg);
+  border-left: 4px solid var(--neutral-border);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: var(--space-md);
+  margin: var(--space-md) 0;
+}
+
+.example-box .ex-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin-bottom: 0.5rem;
+}
+
+/* ── SCENARIO ── */
+.scenario-intro {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: var(--space-lg);
+}
+
+.scenario-header {
+  background: var(--prussian);
+  padding: var(--space-md) var(--space-lg);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.scenario-num {
+  font-family: var(--f-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.2);
+  flex-shrink: 0;
+}
+
+.scenario-header h3 {
+  color: white;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.scenario-header .scenario-tag {
+  margin-left: auto;
+  background: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.8);
+  border-radius: 4px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.scenario-body { padding: var(--space-lg); }
+
+.scenario-parties {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  margin: var(--space-md) 0;
+}
+
+.party-box {
+  background: var(--ground-alt);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+}
+
+.party-name {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.party-role {
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  margin-bottom: 0.5rem;
+}
+
+.party-position {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--ink-mid);
+  padding: 0.5rem;
+  background: var(--surface);
+  border-radius: 6px;
+  border-left: 3px solid var(--prussian-mid);
+}
+
+/* Question/choices */
+.q-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: var(--space-sm);
+}
+
+.scenario-question {
+  font-family: var(--f-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: var(--space-md);
+  line-height: 1.4;
+}
+
+.choices { display: flex; flex-direction: column; gap: var(--space-sm); }
+
+.choice-btn {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--f-body);
+  font-size: 0.9rem;
+  color: var(--ink-mid);
+  line-height: 1.5;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.choice-btn:hover:not(:disabled) {
+  border-color: var(--slate);
+  background: var(--ground-alt);
+  color: var(--ink);
+}
+
+.choice-btn:disabled { cursor: default; }
+.choice-btn.correct { border-color: var(--correct-border); background: var(--correct-bg); color: var(--ink); }
+.choice-btn.wrong { border-color: var(--wrong-border); background: var(--wrong-bg); color: var(--ink); }
+.choice-btn.missed { border-color: var(--correct-border); border-style: dashed; }
+
+.choice-letter {
+  font-family: var(--f-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  min-width: 1.4rem;
+  flex-shrink: 0;
+}
+
+.choice-btn.correct .choice-letter { color: var(--forest); }
+.choice-btn.wrong .choice-letter { color: #C03A2B; }
+
+.feedback-box {
+  display: none;
+  margin-top: var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius);
+}
+
+.feedback-box.show { display: block; animation: fadein 0.2s ease; }
+.feedback-box.correct { background: var(--correct-bg); border: 1px solid var(--correct-border); }
+.feedback-box.wrong { background: var(--wrong-bg); border: 1px solid var(--wrong-border); }
+
+.feedback-box .fb-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+}
+
+.feedback-box.correct .fb-title { color: var(--forest); }
+.feedback-box.wrong .fb-title { color: #C03A2B; }
+
+.feedback-box p { font-size: 0.88rem; margin: 0; }
+
+.next-scenario-btn {
+  display: none;
+  margin-top: var(--space-md);
+  padding: 0.65rem 1.4rem;
+  background: var(--prussian);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--f-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.next-scenario-btn:hover { background: var(--prussian-mid); }
+.next-scenario-btn.show { display: inline-block; }
+
+/* Scenario selector */
+.scenario-tabs {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.scenario-tab {
+  padding: 0.45rem 0.9rem;
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--f-body);
+}
+
+.scenario-tab:hover { border-color: var(--slate); color: var(--ink); }
+.scenario-tab.active { background: var(--prussian); color: white; border-color: var(--prussian); }
+.scenario-tab.done::after { content: ' ✓'; color: var(--forest-light); }
+
+/* ── QUIZ ── */
+.quiz-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: var(--space-md);
+}
+
+.quiz-q-header {
+  background: var(--ground-alt);
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.quiz-q-num {
+  font-family: var(--f-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  letter-spacing: 0.05em;
+}
+
+.quiz-q-body { padding: var(--space-lg); }
+
+.quiz-question {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: var(--space-md);
+  line-height: 1.5;
+}
+
+/* BATNA meter */
+.batna-meter-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin: var(--space-md) 0;
+}
+
+.batna-meter-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 0.4rem;
+}
+
+.batna-scale {
+  display: flex;
+  height: 40px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: var(--space-sm) 0;
+}
+
+.batna-zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.batna-zone.reject { background: #C03A2B; color: white; width: 20%; }
+.batna-zone.consider { background: #E08020; color: white; width: 25%; }
+.batna-zone.negotiate { background: var(--forest); color: white; flex: 1; }
+.batna-zone.excellent { background: var(--prussian); color: white; width: 25%; }
+
+/* Summary / results */
+.score-ring {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto var(--space-md);
+  position: relative;
+}
+
+.score-ring svg { transform: rotate(-90deg); }
+.score-ring .ring-bg { fill: none; stroke: var(--border); stroke-width: 10; }
+.score-ring .ring-fill { fill: none; stroke: var(--amber); stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
+.score-num {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--f-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* Button styles */
+.btn-primary {
+  display: inline-block;
+  padding: 0.7rem 1.5rem;
+  background: var(--prussian);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--f-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-decoration: none;
+}
+
+.btn-primary:hover { background: var(--prussian-mid); }
+
+.btn-secondary {
+  display: inline-block;
+  padding: 0.65rem 1.3rem;
+  background: transparent;
+  color: var(--prussian);
+  border: 1.5px solid var(--prussian);
+  border-radius: var(--radius);
+  font-family: var(--f-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-secondary:hover { background: var(--prussian); color: white; }
+
+/* Key concept callout */
+.callout {
+  border-left: 4px solid var(--amber);
+  padding: var(--space-md) var(--space-lg);
+  margin: var(--space-md) 0;
+  background: rgba(212, 130, 10, 0.06);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.callout p { margin: 0; font-size: 0.95rem; }
+
+/* Step list */
+.step-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin: var(--space-md) 0; }
+.step-item {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+
+.step-num {
+  font-family: var(--f-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--amber-light);
+  line-height: 1.2;
+  min-width: 2rem;
+  flex-shrink: 0;
+}
+
+.step-content h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.15rem;
+}
+
+.step-content p { font-size: 0.88rem; color: var(--ink-soft); margin: 0; }
+
+/* BATNA detail */
+.batna-cards { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); margin: var(--space-md) 0; }
+.batna-card {
+  background: var(--ground-alt);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+}
+
+.batna-card.high-batna { border-top: 4px solid var(--forest); }
+.batna-card.low-batna { border-top: 4px solid #C03A2B; }
+
+.batna-card .bc-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.batna-card.high-batna .bc-label { color: var(--forest); }
+.batna-card.low-batna .bc-label { color: #C03A2B; }
+
+.batna-card .bc-val {
+  font-family: var(--f-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+}
+
+.batna-card p { font-size: 0.82rem; margin: 0; color: var(--ink-soft); }
+
+/* ── Overview / home ── */
+.overview-hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-xl);
+  align-items: center;
+  margin-bottom: var(--space-xl);
+}
+
+.overview-visual {
+  width: 180px;
+  height: 180px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.overview-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+  margin: var(--space-lg) 0;
+}
+
+.overview-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.overview-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+.ov-icon {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.ov-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--ink);
+  margin-bottom: 0.2rem;
+}
+
+.ov-desc {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* Quote */
+.pull-quote {
+  border-top: 3px solid var(--amber);
+  padding-top: var(--space-md);
+  margin: var(--space-lg) 0;
+}
+
+.pull-quote blockquote {
+  font-family: var(--f-display);
+  font-size: 1.3rem;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.pull-quote cite {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* Mobile hamburger */
+.mobile-header {
+  display: none;
+  background: var(--prussian);
+  color: white;
+  padding: var(--space-sm) var(--space-md);
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.hamburger-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+
+.mobile-wordmark {
+  font-family: var(--f-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* Quiz results */
+.quiz-results-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+  margin: var(--space-lg) 0;
+}
+
+.qr-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+  text-align: center;
+}
+
+.qr-val {
+  font-family: var(--f-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--amber);
+  line-height: 1;
+}
+
+.qr-label {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin-top: 0.25rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .app-shell { grid-template-columns: 1fr; }
+  .sidebar { display: none; height: auto; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 200; }
+  .sidebar.mobile-open { display: flex; }
+  .mobile-header { display: flex; }
+  .section { padding: var(--space-lg) var(--space-md); }
+  .overview-hero { grid-template-columns: 1fr; }
+  .overview-visual { display: none; }
+  .principle-grid { grid-template-columns: 1fr; }
+  .split-compare { grid-template-columns: 1fr; }
+  .compare-vs { display: none; }
+  .scenario-parties { grid-template-columns: 1fr; }
+  .batna-cards { grid-template-columns: 1fr; }
+  .quiz-results-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Mobile header -->
+<div class="mobile-header" id="mobile-header">
+  <span class="mobile-wordmark">MGA Learning</span>
+  <button class="hamburger-btn" onclick="toggleMobileSidebar()" aria-label="Menu">☰</button>
+</div>
+
+<div class="app-shell">
+  <!-- Sidebar navigation -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="wordmark">Mutual Gains<br>Approach</div>
+      <div class="sub">Interactive Learning</div>
+    </div>
+
+    <span class="nav-section-label">Foundations</span>
+    <button class="nav-item active" data-section="overview" onclick="showSection('overview', this)">
+      <span class="nav-icon">⊙</span> Overview
+    </button>
+    <button class="nav-item" data-section="principles" onclick="showSection('principles', this)">
+      <span class="nav-icon">◈</span> The 4 Principles
+    </button>
+    <button class="nav-item" data-section="batna" onclick="showSection('batna', this)">
+      <span class="nav-icon">⬡</span> BATNA
+    </button>
+
+    <span class="nav-section-label">Practice</span>
+    <button class="nav-item" data-section="scenarios" onclick="showSection('scenarios', this)">
+      <span class="nav-icon">◈</span> Scenarios
+    </button>
+    <button class="nav-item" data-section="quiz" onclick="showSection('quiz', this)">
+      <span class="nav-icon">✦</span> Knowledge Check
+    </button>
+
+    <div class="sidebar-progress">
+      <div class="progress-label">Your progress</div>
+      <div class="progress-bar-outer">
+        <div class="progress-bar-fill" id="prog-fill" style="width: 0%"></div>
+      </div>
+      <div class="progress-pct" id="prog-pct">0% complete</div>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <main class="main-content">
+
+    <!-- ── OVERVIEW ── -->
+    <section class="section active" id="section-overview">
+      <div class="eyebrow">Harvard Negotiation Project</div>
+      <div class="overview-hero">
+        <div>
+          <h1 class="display">Negotiating<br><em>together,</em><br>not against.</h1>
+          <p class="lead">The Mutual Gains Approach reframes negotiation — not as a contest one side wins, but as a joint problem-solving process that leaves everyone better off.</p>
+          <button class="btn-primary" onclick="showSection('principles', document.querySelector('[data-section=principles]'))">Start with the principles →</button>
+        </div>
+        <div class="overview-visual">
+          <svg viewBox="0 0 180 180" width="180" height="180" aria-hidden="true">
+            <circle cx="70" cy="90" r="55" fill="#0C3251" opacity="0.18"/>
+            <circle cx="110" cy="90" r="55" fill="#D4820A" opacity="0.18"/>
+            <ellipse cx="90" cy="90" rx="22" ry="38" fill="#1E6B52" opacity="0.5"/>
+            <text x="45" y="94" font-family="Georgia,serif" font-size="9" fill="#0C3251" font-weight="700" text-anchor="middle">Your</text>
+            <text x="45" y="105" font-family="Georgia,serif" font-size="9" fill="#0C3251" font-weight="700" text-anchor="middle">Interests</text>
+            <text x="135" y="94" font-family="Georgia,serif" font-size="9" fill="#D4820A" font-weight="700" text-anchor="middle">Their</text>
+            <text x="135" y="105" font-family="Georgia,serif" font-size="9" fill="#D4820A" font-weight="700" text-anchor="middle">Interests</text>
+            <text x="90" y="94" font-family="Georgia,serif" font-size="7.5" fill="#fff" font-weight="700" text-anchor="middle">Mutual</text>
+            <text x="90" y="104" font-family="Georgia,serif" font-size="7.5" fill="#fff" font-weight="700" text-anchor="middle">Gains</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="pull-quote">
+        <blockquote>"The key is to look for interests behind positions — and to invent options for mutual gain."</blockquote>
+        <cite>Fisher, Ury &amp; Patton · Getting to Yes (1981)</cite>
+      </div>
+
+      <hr class="divider">
+      <h2 class="section-title" style="margin-bottom:var(--space-md)">What you'll learn</h2>
+      <div class="overview-cards">
+        <div class="overview-card" onclick="showSection('principles', document.querySelector('[data-section=principles]'))">
+          <div class="ov-icon">◈</div>
+          <div class="ov-title">The 4 Principles</div>
+          <p class="ov-desc">The core framework: from separating people to objective criteria</p>
+        </div>
+        <div class="overview-card" onclick="showSection('batna', document.querySelector('[data-section=batna]'))">
+          <div class="ov-icon">⬡</div>
+          <div class="ov-title">BATNA</div>
+          <p class="ov-desc">Your best alternative — the backbone of negotiating power</p>
+        </div>
+        <div class="overview-card" onclick="showSection('scenarios', document.querySelector('[data-section=scenarios]'))">
+          <div class="ov-icon">◈</div>
+          <div class="ov-title">Scenarios</div>
+          <p class="ov-desc">Apply MGA to realistic hospitality and business situations</p>
+        </div>
+        <div class="overview-card" onclick="showSection('quiz', document.querySelector('[data-section=quiz]'))">
+          <div class="ov-icon">✦</div>
+          <div class="ov-title">Knowledge Check</div>
+          <p class="ov-desc">Test your understanding with targeted questions</p>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <h3>Why MGA matters</h3>
+      <p>Traditional bargaining — I ask for €200, you offer €120, we land at €160 — leaves value on the table. It assumes a fixed pie and turns every negotiation into a tug-of-war.</p>
+      <p>MGA, developed by the Harvard Negotiation Project, shows that when parties understand each other's underlying <strong>interests</strong>, they almost always discover options that both prefer over the halfway point. The method is widely used in labour relations, international diplomacy, environmental disputes, and everyday business negotiations.</p>
+
+      <div class="callout">
+        <p><strong>MGA ≠ splitting the difference.</strong> It is a structured method for finding solutions better than any compromise — by expanding what's possible before deciding how to divide it.</p>
+      </div>
+    </section>
+
+    <!-- ── PRINCIPLES ── -->
+    <section class="section" id="section-principles">
+      <div class="eyebrow">The Framework</div>
+      <h1 class="display">Four principles.<br><em>One method.</em></h1>
+      <p class="lead">These four principles work together. Skip one, and you risk a deal that satisfies no one — or no deal at all.</p>
+
+      <div class="principle-grid">
+        <div class="principle-card p1" onclick="togglePrinciple('p1')">
+          <div class="principle-number">01</div>
+          <h3>Separate People from the Problem</h3>
+          <p>Address the relationship and the substance as two distinct problems — never let personality become the battleground.</p>
+        </div>
+        <div class="principle-card p2" onclick="togglePrinciple('p2')">
+          <div class="principle-number">02</div>
+          <h3>Focus on Interests, Not Positions</h3>
+          <p>Ask why, not just what. The position is the stated demand; the interest is the need behind it.</p>
+        </div>
+        <div class="principle-card p3" onclick="togglePrinciple('p3')">
+          <div class="principle-number">03</div>
+          <h3>Generate Options for Mutual Gain</h3>
+          <p>Before evaluating, invent. Brainstorm broadly and resist the urge to close the deal prematurely.</p>
+        </div>
+        <div class="principle-card p4" onclick="togglePrinciple('p4')">
+          <div class="principle-number">04</div>
+          <h3>Insist on Objective Criteria</h3>
+          <p>Ground decisions in independent standards — market rates, expert opinion, legal precedent — not willpower.</p>
+        </div>
+      </div>
+
+      <!-- Detail panels -->
+      <div class="principle-detail" id="detail-p1">
+        <div class="detail-header">
+          <div class="detail-stripe" style="background:var(--slate)"></div>
+          <div>
+            <div class="eyebrow">Principle 01</div>
+            <h2 class="section-title">Separate People from the Problem</h2>
+          </div>
+        </div>
+        <p>Every negotiation involves two levels at once: the <strong>substantive issue</strong> (what you're trying to agree on) and the <strong>relationship</strong> between the parties. Mixing them is the most common reason talks break down.</p>
+        <p>When someone feels personally attacked or disrespected, they stop solving problems and start defending themselves. Separating the two means you can be firm on the issue while staying respectful of the person.</p>
+
+        <div class="split-compare">
+          <div class="compare-side left">
+            <div class="compare-label">Positional bargaining trap</div>
+            <div class="compare-item">"You always overpromise."</div>
+            <div class="compare-item">"Your team is impossible to work with."</div>
+            <div class="compare-item">"I need that by Friday — no excuses."</div>
+          </div>
+          <div class="compare-vs">vs</div>
+          <div class="compare-side right">
+            <div class="compare-label">MGA framing</div>
+            <div class="compare-item">"The last two deadlines were missed — how can we prevent that?"</div>
+            <div class="compare-item">"I'd like to understand where the friction comes from."</div>
+            <div class="compare-item">"Friday is critical for us. What would help you meet it?"</div>
+          </div>
+        </div>
+
+        <div class="example-box">
+          <div class="ex-label">In practice: hotel supplier dispute</div>
+          <p>The purchasing manager is frustrated that a linen supplier delivered late for the third time. Instead of accusing the supplier's representative of incompetence, she separates: <em>"The late deliveries are a serious operational problem for us — can we look at your fulfilment process together to find the bottleneck?"</em> The relationship stays intact; the problem gets solved.</p>
+        </div>
+
+        <ul class="step-list" style="margin-top:var(--space-md)">
+          <li class="step-item">
+            <div class="step-num">→</div>
+            <div class="step-content">
+              <h4>Acknowledge emotions before tackling the issue</h4>
+              <p>People need to feel heard before they can think clearly about solutions.</p>
+            </div>
+          </li>
+          <li class="step-item">
+            <div class="step-num">→</div>
+            <div class="step-content">
+              <h4>Use "I" statements about impact, not "you" accusations</h4>
+              <p>"When X happens, it creates Y problem" rather than "You did X."</p>
+            </div>
+          </li>
+          <li class="step-item">
+            <div class="step-num">→</div>
+            <div class="step-content">
+              <h4>Signal respect for the person, firmness on the substance</h4>
+              <p>Hard on the problem, soft on the people — not the other way around.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="principle-detail" id="detail-p2">
+        <div class="detail-header">
+          <div class="detail-stripe" style="background:var(--amber)"></div>
+          <div>
+            <div class="eyebrow">Principle 02</div>
+            <h2 class="section-title">Focus on Interests, Not Positions</h2>
+          </div>
+        </div>
+        <p>A <strong>position</strong> is what someone says they want. An <strong>interest</strong> is why they want it — the underlying need, fear, hope, or constraint driving that demand. Positions often seem incompatible; interests usually are not.</p>
+
+        <div class="iceberg-wrap" style="min-height: 260px;">
+          <div class="iceberg-water"></div>
+          <div class="water-label">Visible ↑ Hidden ↓</div>
+          <div class="iceberg-inner">
+            <div class="iceberg-above">
+              <div class="iceberg-label">Position (the "what")</div>
+              <div class="iceberg-items">
+                <span class="iceberg-chip">"I want a 20% discount"</span>
+                <span class="iceberg-chip">"I need Friday delivery"</span>
+                <span class="iceberg-chip">"I won't accept less than €45/hour"</span>
+              </div>
+            </div>
+            <div class="iceberg-below">
+              <div class="iceberg-label">Interests (the "why")</div>
+              <div class="iceberg-items">
+                <span class="iceberg-chip">stay within budget</span>
+                <span class="iceberg-chip">avoid stockouts before the weekend</span>
+                <span class="iceberg-chip">cover childcare costs</span>
+                <span class="iceberg-chip">feel valued / respected</span>
+                <span class="iceberg-chip">reduce risk</span>
+                <span class="iceberg-chip">maintain client trust</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <p><strong>The magic question:</strong> "Why is that important to you?" — asked sincerely, not tactically — almost always surfaces an interest that opens new options.</p>
+        </div>
+
+        <div class="example-box">
+          <div class="ex-label">Classic example: the library window dispute</div>
+          <p>Two readers argue about a window. One wants it open; the other wants it closed. Position deadlock. But their interests? One needs fresh air; the other dislikes the draught. Solution: open a window in the adjacent room. <em>The position was fixed; the interest was not.</em></p>
+        </div>
+      </div>
+
+      <div class="principle-detail" id="detail-p3">
+        <div class="detail-header">
+          <div class="detail-stripe" style="background:var(--forest)"></div>
+          <div>
+            <div class="eyebrow">Principle 03</div>
+            <h2 class="section-title">Generate Options for Mutual Gain</h2>
+          </div>
+        </div>
+        <p>Most negotiators jump from "here's the problem" to "here's my solution." MGA inserts a critical step: <strong>deliberate invention of options</strong> before evaluation. This separates the creative act from the judging act — because premature judgment kills creativity.</p>
+
+        <ul class="step-list">
+          <li class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h4>Separate inventing from deciding</h4>
+              <p>Run a brainstorm where no option is judged. Write everything down. "Impossible" ideas often contain the seed of a workable one.</p>
+            </div>
+          </li>
+          <li class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h4>Look for trades across different valued items</h4>
+              <p>Party A values timing highly; Party B values price. A deal where B gets a better price and A gets faster delivery costs almost nothing extra — it just requires that you surface both interests first.</p>
+            </div>
+          </li>
+          <li class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h4>Expand before you divide</h4>
+              <p>Ask: what could we add to the agreement that makes this better for both of us? A bigger pie is always easier to split than a small one.</p>
+            </div>
+          </li>
+          <li class="step-item">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <h4>Invent options for the other side too</h4>
+              <p>What would make it easier for them to say yes? Understanding their constraints helps you design solutions they can accept.</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="example-box">
+          <div class="ex-label">Hotel contract renewal</div>
+          <p>A hotel wants to renew its contract with a catering supplier but the proposed price is 15% higher. Instead of just haggling on price, they brainstorm: extended contract duration (security for the supplier), guaranteed volume minimums, early payment terms, co-marketing on the hotel's website. The final deal costs the hotel less cash, costs the supplier less margin — and locks in a relationship both value.</p>
+        </div>
+      </div>
+
+      <div class="principle-detail" id="detail-p4">
+        <div class="detail-header">
+          <div class="detail-stripe" style="background:var(--prussian-mid)"></div>
+          <div>
+            <div class="eyebrow">Principle 04</div>
+            <h2 class="section-title">Insist on Objective Criteria</h2>
+          </div>
+        </div>
+        <p>When the facts are ambiguous and the interests legitimate, who decides? MGA says: neither party's willpower — but an <strong>independent standard</strong> both can accept as fair. Agreeing on the criteria before discussing the outcome removes ego from the equation.</p>
+
+        <div class="card-sm" style="margin:var(--space-md) 0;">
+          <h4 style="margin-bottom:0.6rem; font-size:0.9rem; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.08em; font-weight:700;">Sources of objective criteria</h4>
+          <div style="display:flex; flex-wrap:wrap; gap:0.4rem;">
+            <span class="tag">Market rates</span>
+            <span class="tag">Industry benchmarks</span>
+            <span class="tag">Expert appraisal</span>
+            <span class="tag">Legal precedent</span>
+            <span class="tag">Scientific evidence</span>
+            <span class="tag">Replacement cost</span>
+            <span class="tag">Depreciation tables</span>
+            <span class="tag">Collective agreement</span>
+            <span class="tag">What a court would decide</span>
+          </div>
+        </div>
+
+        <div class="split-compare">
+          <div class="compare-side left">
+            <div class="compare-label">Without objective criteria</div>
+            <div class="compare-item">"That's just not acceptable."</div>
+            <div class="compare-item">"Everyone in this industry charges more."</div>
+            <div class="compare-item">"We've always done it this way."</div>
+          </div>
+          <div class="compare-vs">vs</div>
+          <div class="compare-side right">
+            <div class="compare-label">With objective criteria</div>
+            <div class="compare-item">"The Dutch Hospitality Association's 2024 rate card shows the market average at €38–42/hr."</div>
+            <div class="compare-item">"Shall we use the ABN AMRO Hotel Index as our benchmark?"</div>
+            <div class="compare-item">"What would an independent mediator recommend here?"</div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <p><strong>Never yield to pressure — only to principle.</strong> If the other party pushes harder, ask: "What's your reasoning?" If they can't offer a principle, you don't need to move.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── BATNA ── -->
+    <section class="section" id="section-batna">
+      <div class="eyebrow">Negotiating Power</div>
+      <h1 class="display">BATNA:<br><em>Your fallback,</em><br>your leverage.</h1>
+      <p class="lead">Your Best Alternative To a Negotiated Agreement defines how strong your position really is — regardless of what you say at the table.</p>
+
+      <div class="card">
+        <h3>What is BATNA?</h3>
+        <p>BATNA is what you will do <strong>if this negotiation fails entirely</strong>. It is not your bottom line (the minimum you'll accept) — it is your best realistic alternative course of action outside this negotiation.</p>
+        <p>Knowing your BATNA answers the most important question in any negotiation: <em>when should I walk away?</em></p>
+      </div>
+
+      <h3 style="margin: var(--space-lg) 0 var(--space-sm)">Strong vs. weak BATNA</h3>
+      <div class="batna-cards">
+        <div class="batna-card high-batna">
+          <div class="bc-label">Strong BATNA</div>
+          <div class="bc-val">"I have options."</div>
+          <p>You can walk away without serious harm. This gives you confidence, reduces concessions, and signals credibility. The other party senses it.</p>
+        </div>
+        <div class="batna-card low-batna">
+          <div class="bc-label">Weak BATNA</div>
+          <div class="bc-val">"I have to make this work."</div>
+          <p>Desperation shows. You concede more than you should and may accept a deal worse than your alternatives — which defeats the purpose of negotiating.</p>
+        </div>
+      </div>
+
+      <div class="batna-meter-wrap">
+        <div class="batna-meter-label">Decision zone: when to accept a deal</div>
+        <div class="batna-scale">
+          <div class="batna-zone reject">Worse than BATNA — reject</div>
+          <div class="batna-zone consider">Consider carefully</div>
+          <div class="batna-zone negotiate">Negotiate — potential value here</div>
+          <div class="batna-zone excellent">Better than BATNA — accept</div>
+        </div>
+        <p style="font-size:0.8rem; color:var(--ink-soft); margin-top:0.5rem;">Never accept a deal worse than your BATNA. Never reject a deal substantially better than it.</p>
+      </div>
+
+      <hr class="divider">
+      <h3>Three things to do with BATNA</h3>
+      <ul class="step-list">
+        <li class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Know your own BATNA before you sit down</h4>
+            <p>If you haven't identified your alternatives, you can't judge whether any deal is worth accepting. Write it down. Be realistic — wishful alternatives aren't BATNAs.</p>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Improve your BATNA before and during negotiations</h4>
+            <p>Contact other suppliers. Develop in-house capacity. Build options. The stronger your alternative, the more leverage you have — even if you never mention it.</p>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Understand (and sometimes strengthen) their BATNA</h4>
+            <p>What will they do if this fails? If their alternative is bad, they need this deal more than they show. If it's strong, you need to make your offer more attractive.</p>
+          </div>
+        </li>
+      </ul>
+
+      <div class="example-box" style="border-left-color: var(--amber); background: rgba(212,130,10,0.06);">
+        <div class="ex-label" style="color:var(--amber)">Case: salary negotiation</div>
+        <p>Jana is negotiating her salary for a new hotel management role. Her BATNA: a confirmed offer from a competitor at €3,400/month. She doesn't need to reveal this — but knowing it means she won't accept anything below €3,400, and she negotiates confidently from there. When the hotel offers €3,200, she declines without panic. They counter at €3,500. She accepts. <em>Her BATNA did the work.</em></p>
+      </div>
+
+      <hr class="divider">
+      <div class="callout">
+        <p><strong>ZOPA:</strong> The Zone of Possible Agreement sits between your BATNA and theirs. If no such zone exists — if both parties are better off walking away — no deal should happen, and that's the right outcome.</p>
+      </div>
+    </section>
+
+    <!-- ── SCENARIOS ── -->
+    <section class="section" id="section-scenarios">
+      <div class="eyebrow">Applied Practice</div>
+      <h1 class="display">MGA in <em>action.</em></h1>
+      <p class="lead">Work through each scenario. Read the situation, then choose the response that best reflects MGA principles. You'll get feedback on your reasoning.</p>
+
+      <div class="scenario-tabs" id="scenario-tabs">
+        <button class="scenario-tab active" onclick="showScenario(0, this)">1 · Supplier</button>
+        <button class="scenario-tab" onclick="showScenario(1, this)">2 · Team conflict</button>
+        <button class="scenario-tab" onclick="showScenario(2, this)">3 · Guest complaint</button>
+        <button class="scenario-tab" onclick="showScenario(3, this)">4 · Budget</button>
+      </div>
+
+      <!-- Scenario 0 -->
+      <div class="scenario-intro" id="sc-0">
+        <div class="scenario-header">
+          <div class="scenario-num">01</div>
+          <h3>Supplier contract dispute</h3>
+          <span class="scenario-tag">Hospitality · Procurement</span>
+        </div>
+        <div class="scenario-body">
+          <p>Your hotel's linen supplier, Textiel BV, has just proposed a 22% price increase for the upcoming year. The supplier claims rising cotton prices are to blame. Your hotel has used Textiel BV for six years. Your GM says to "push back hard."</p>
+
+          <div class="scenario-parties">
+            <div class="party-box">
+              <div class="party-name">🏨 Your hotel</div>
+              <div class="party-role">Purchasing Manager</div>
+              <div class="party-position">"22% is unacceptable. We need to keep costs stable."</div>
+            </div>
+            <div class="party-box">
+              <div class="party-name">🧵 Textiel BV</div>
+              <div class="party-role">Account Manager</div>
+              <div class="party-position">"Cotton costs are up 30%. We can't absorb that."</div>
+            </div>
+          </div>
+
+          <hr class="divider" style="margin:var(--space-md) 0">
+          <div class="q-label">Your move — Question 1 of 2</div>
+          <div class="scenario-question">Your first response to the proposal should be:</div>
+          <div class="choices" id="sc-0-q1">
+            <button class="choice-btn" onclick="answerScenario(0,0,'a','wrong')">
+              <span class="choice-letter">A</span>
+              "22% is out of the question. Our final offer is 5% or we go to market."
+            </button>
+            <button class="choice-btn" onclick="answerScenario(0,0,'b','correct')">
+              <span class="choice-letter">B</span>
+              "Can you walk us through the cost breakdown? We'd like to understand what's driving this and see if we can solve it together."
+            </button>
+            <button class="choice-btn" onclick="answerScenario(0,0,'c','wrong')">
+              <span class="choice-letter">C</span>
+              "We'll need to contact two other suppliers before we can continue this conversation."
+            </button>
+            <button class="choice-btn" onclick="answerScenario(0,0,'d','wrong')">
+              <span class="choice-letter">D</span>
+              "Let's split the difference — 11% feels fair to both sides."
+            </button>
+          </div>
+          <div class="feedback-box" id="sc-0-q1-fb"></div>
+          <div id="sc-0-q2" style="display:none; margin-top:var(--space-lg);">
+            <hr class="divider">
+            <div class="q-label">Question 2 of 2</div>
+            <div class="scenario-question">Textiel BV's interest beneath their position ("we need 22% more") is most likely:</div>
+            <div class="choices">
+              <button class="choice-btn" onclick="answerScenario(0,1,'a','wrong')">
+                <span class="choice-letter">A</span>
+                To maximise short-term profit margins
+              </button>
+              <button class="choice-btn" onclick="answerScenario(0,1,'b','correct')">
+                <span class="choice-letter">B</span>
+                To maintain their own profitability under rising input costs while keeping a valued long-term client
+              </button>
+              <button class="choice-btn" onclick="answerScenario(0,1,'c','wrong')">
+                <span class="choice-letter">C</span>
+                To test how much the hotel values the relationship
+              </button>
+            </div>
+            <div class="feedback-box" id="sc-0-q2-fb"></div>
+          </div>
+          <button class="next-scenario-btn" id="sc-0-next" onclick="showScenario(1, document.querySelectorAll('.scenario-tab')[1])">Next scenario →</button>
+        </div>
+      </div>
+
+      <!-- Scenario 1 -->
+      <div class="scenario-intro" id="sc-1" style="display:none">
+        <div class="scenario-header">
+          <div class="scenario-num">02</div>
+          <h3>Internal team conflict</h3>
+          <span class="scenario-tag">Management · HR</span>
+        </div>
+        <div class="scenario-body">
+          <p>The F&amp;B department and the Events team are arguing about who controls the banquet kitchen during a busy weekend. F&amp;B says events staff are "invading their space." Events says F&amp;B is "deliberately obstructive." The hotel director asks you to mediate.</p>
+
+          <div class="scenario-parties">
+            <div class="party-box">
+              <div class="party-name">🍽 F&amp;B Manager</div>
+              <div class="party-role">Food &amp; Beverage</div>
+              <div class="party-position">"The banquet kitchen is ours. Events should plan better."</div>
+            </div>
+            <div class="party-box">
+              <div class="party-name">🎪 Events Manager</div>
+              <div class="party-role">Events Department</div>
+              <div class="party-position">"We have a confirmed booking. F&amp;B is blocking our operations."</div>
+            </div>
+          </div>
+
+          <hr class="divider" style="margin:var(--space-md) 0">
+          <div class="q-label">Question 1 of 2</div>
+          <div class="scenario-question">As mediator, what is your first priority according to MGA?</div>
+          <div class="choices" id="sc-1-q1">
+            <button class="choice-btn" onclick="answerScenario(1,0,'a','wrong')">
+              <span class="choice-letter">A</span>
+              Decide who is technically correct based on the org chart and inform both parties
+            </button>
+            <button class="choice-btn" onclick="answerScenario(1,0,'b','wrong')">
+              <span class="choice-letter">B</span>
+              Ask them to each write a proposal for how space should be allocated
+            </button>
+            <button class="choice-btn" onclick="answerScenario(1,0,'c','correct')">
+              <span class="choice-letter">C</span>
+              Acknowledge the frustration on both sides, then ask each manager separately what they actually need the kitchen for this weekend
+            </button>
+            <button class="choice-btn" onclick="answerScenario(1,0,'d','wrong')">
+              <span class="choice-letter">D</span>
+              Tell them both to act professionally and stop letting personal feelings interfere
+            </button>
+          </div>
+          <div class="feedback-box" id="sc-1-q1-fb"></div>
+          <div id="sc-1-q2" style="display:none; margin-top:var(--space-lg);">
+            <hr class="divider">
+            <div class="q-label">Question 2 of 2</div>
+            <div class="scenario-question">Once you understand their underlying needs (F&amp;B needs cold-station access 14:00–18:00; Events needs the hot section 13:00–20:00), the MGA approach is to:</div>
+            <div class="choices">
+              <button class="choice-btn" onclick="answerScenario(1,1,'a','wrong')">
+                <span class="choice-letter">A</span>
+                Ask the hotel director to rule on a single shared schedule both must follow
+              </button>
+              <button class="choice-btn" onclick="answerScenario(1,1,'b','correct')">
+                <span class="choice-letter">B</span>
+                Facilitate a joint session where both teams map their actual time needs on a whiteboard, and invent a shared schedule before either claims the full space
+              </button>
+              <button class="choice-btn" onclick="answerScenario(1,1,'c','wrong')">
+                <span class="choice-letter">C</span>
+                Give the space to Events since they have an external client, and compensate F&amp;B with an alternative area
+              </button>
+            </div>
+            <div class="feedback-box" id="sc-1-q2-fb"></div>
+          </div>
+          <button class="next-scenario-btn" id="sc-1-next" onclick="showScenario(2, document.querySelectorAll('.scenario-tab')[2])">Next scenario →</button>
+        </div>
+      </div>
+
+      <!-- Scenario 2 -->
+      <div class="scenario-intro" id="sc-2" style="display:none">
+        <div class="scenario-header">
+          <div class="scenario-num">03</div>
+          <h3>Guest complaint &amp; compensation</h3>
+          <span class="scenario-tag">Front Office · Guest Relations</span>
+        </div>
+        <div class="scenario-body">
+          <p>A business guest, Ms. Verhagen, checks out furious. Her room had a noisy HVAC unit throughout her stay, she wasn't moved when she asked, and she missed a crucial phone call because the line was unclear. She is demanding a full refund (€480) and threatening to post a review online.</p>
+
+          <div class="scenario-parties">
+            <div class="party-box">
+              <div class="party-name">😠 Ms. Verhagen</div>
+              <div class="party-role">Business guest, VIP tier</div>
+              <div class="party-position">"I want a full refund. This stay was completely unacceptable."</div>
+            </div>
+            <div class="party-box">
+              <div class="party-name">🏨 Front Office Manager</div>
+              <div class="party-role">Your role</div>
+              <div class="party-position">Hotel policy caps compensation at 50% without GM approval.</div>
+            </div>
+          </div>
+
+          <hr class="divider" style="margin:var(--space-md) 0">
+          <div class="q-label">Question 1 of 2</div>
+          <div class="scenario-question">Before discussing any compensation, you should:</div>
+          <div class="choices" id="sc-2-q1">
+            <button class="choice-btn" onclick="answerScenario(2,0,'a','wrong')">
+              <span class="choice-letter">A</span>
+              Immediately offer 50% to de-escalate the situation and stay within policy
+            </button>
+            <button class="choice-btn" onclick="answerScenario(2,0,'b','correct')">
+              <span class="choice-letter">B</span>
+              Listen fully, acknowledge that her experience fell far below expectations, and genuinely apologise — before any mention of compensation
+            </button>
+            <button class="choice-btn" onclick="answerScenario(2,0,'c','wrong')">
+              <span class="choice-letter">C</span>
+              Explain the hotel's policy calmly so she understands a full refund isn't possible
+            </button>
+            <button class="choice-btn" onclick="answerScenario(2,0,'d','wrong')">
+              <span class="choice-letter">D</span>
+              Ask her to submit a formal complaint in writing so you can investigate properly
+            </button>
+          </div>
+          <div class="feedback-box" id="sc-2-q1-fb"></div>
+          <div id="sc-2-q2" style="display:none; margin-top:var(--space-lg);">
+            <hr class="divider">
+            <div class="q-label">Question 2 of 2</div>
+            <div class="scenario-question">Ms. Verhagen's deeper interest is most likely:</div>
+            <div class="choices">
+              <button class="choice-btn" onclick="answerScenario(2,1,'a','wrong')">
+                <span class="choice-letter">A</span>
+                To get €480 in cash — the financial loss is her primary concern
+              </button>
+              <button class="choice-btn" onclick="answerScenario(2,1,'b','correct')">
+                <span class="choice-letter">B</span>
+                To feel heard, respected, and confident that the problem won't recur if she stays again — plus reasonable acknowledgement of the disruption
+              </button>
+              <button class="choice-btn" onclick="answerScenario(2,1,'c','wrong')">
+                <span class="choice-letter">C</span>
+                To damage the hotel's reputation as a warning to other guests
+              </button>
+            </div>
+            <div class="feedback-box" id="sc-2-q2-fb"></div>
+          </div>
+          <button class="next-scenario-btn" id="sc-2-next" onclick="showScenario(3, document.querySelectorAll('.scenario-tab')[3])">Next scenario →</button>
+        </div>
+      </div>
+
+      <!-- Scenario 3 -->
+      <div class="scenario-intro" id="sc-3" style="display:none">
+        <div class="scenario-header">
+          <div class="scenario-num">04</div>
+          <h3>Departmental budget allocation</h3>
+          <span class="scenario-tag">Management · Finance</span>
+        </div>
+        <div class="scenario-body">
+          <p>The hotel has a €40,000 discretionary investment budget. Marketing wants it for a digital advertising campaign. Maintenance says the HVAC system will fail within 18 months without a €35,000 overhaul. Both department heads have submitted requests totalling €75,000. The GM asks you to propose a solution.</p>
+
+          <div class="scenario-parties">
+            <div class="party-box">
+              <div class="party-name">📣 Marketing</div>
+              <div class="party-role">Marketing Manager</div>
+              <div class="party-position">"We need this now. Summer is our peak acquisition season."</div>
+            </div>
+            <div class="party-box">
+              <div class="party-name">🔧 Maintenance</div>
+              <div class="party-role">Chief Engineer</div>
+              <div class="party-position">"An HVAC failure mid-season will cost far more than €35k."</div>
+            </div>
+          </div>
+
+          <hr class="divider" style="margin:var(--space-md) 0">
+          <div class="q-label">Question 1 of 2</div>
+          <div class="scenario-question">Which approach best reflects Principle 04 (Objective Criteria) in resolving this dispute?</div>
+          <div class="choices" id="sc-3-q1">
+            <button class="choice-btn" onclick="answerScenario(3,0,'a','wrong')">
+              <span class="choice-letter">A</span>
+              Give each department €20,000 as a fair split
+            </button>
+            <button class="choice-btn" onclick="answerScenario(3,0,'b','wrong')">
+              <span class="choice-letter">B</span>
+              Ask the GM to decide based on strategic priority
+            </button>
+            <button class="choice-btn" onclick="answerScenario(3,0,'c','correct')">
+              <span class="choice-letter">C</span>
+              Commission an independent HVAC assessment and calculate the expected ROI of the marketing campaign — then use those figures to rank investments by risk-adjusted return
+            </button>
+            <button class="choice-btn" onclick="answerScenario(3,0,'d','wrong')">
+              <span class="choice-letter">D</span>
+              Fund Maintenance first since operational failure is inherently worse than missed revenue
+            </button>
+          </div>
+          <div class="feedback-box" id="sc-3-q1-fb"></div>
+          <div id="sc-3-q2" style="display:none; margin-top:var(--space-lg);">
+            <hr class="divider">
+            <div class="q-label">Question 2 of 2</div>
+            <div class="scenario-question">An MGA-style option for mutual gain in this scenario would be:</div>
+            <div class="choices">
+              <button class="choice-btn" onclick="answerScenario(3,1,'a','wrong')">
+                <span class="choice-letter">A</span>
+                Postpone the marketing campaign to next year and fully fund Maintenance
+              </button>
+              <button class="choice-btn" onclick="answerScenario(3,1,'b','correct')">
+                <span class="choice-letter">B</span>
+                Fund the critical HVAC components this year (€35k), explore a lease-finance option for Marketing's campaign, and use the marketing campaign itself to feature the hotel's "newly upgraded systems" as a selling point
+              </button>
+              <button class="choice-btn" onclick="answerScenario(3,1,'c','wrong')">
+                <span class="choice-letter">C</span>
+                Ask both managers to resubmit reduced requests that fit within €40,000
+              </button>
+            </div>
+            <div class="feedback-box" id="sc-3-q2-fb"></div>
+          </div>
+          <button class="next-scenario-btn" id="sc-3-next" onclick="showSection('quiz', document.querySelector('[data-section=quiz]'))">Proceed to Knowledge Check →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── QUIZ ── -->
+    <section class="section" id="section-quiz">
+      <div class="eyebrow">Knowledge Check</div>
+      <h1 class="display">Test your<br><em>understanding.</em></h1>
+      <p class="lead">Eight questions spanning all MGA concepts. Submit each answer to see your reasoning scored.</p>
+
+      <div id="quiz-questions">
+
+        <div class="quiz-card" id="qz-0">
+          <div class="quiz-q-header">
+            <span class="quiz-q-num">Question 1 of 8</span>
+          </div>
+          <div class="quiz-q-body">
+            <div class="quiz-question">Which of the following best describes a "position" in negotiation?</div>
+            <div class="choices">
+              <button class="choice-btn" onclick="answerQuiz(0,'a','wrong')"><span class="choice-letter">A</span> The underlying need or concern that motivates a demand</button>
+              <button class="choice-btn" onclick="answerQuiz(0,'b','correct')"><span class="choice-letter">B</span> The specific demand or stance a party states openly</button>
+              <button class="choice-btn" onclick="answerQuiz(0,'c','wrong')"><span class="choice-letter">C</span> The fallback option if the negotiation fails</button>
+              <button class="choice-btn" onclick="answerQuiz(0,'d','wrong')"><span class="choice-letter">D</span> The standard used to evaluate fairness of an offer</button>
+            </div>
+            <div class="feedback-box" id="qz-0-fb"></div>
+          </div>
+        </div>
+
+        <div class="quiz-card" id="qz-1">
+          <div class="quiz-q-header"><span class="quiz-q-num">Question 2 of 8</span></div>
+          <div class="quiz-q-body">
+            <div class="quiz-question">Why does MGA say to separate people from the problem?</div>
+            <div class="choices">
+              <button class="choice-btn" onclick="answerQuiz(1,'a','wrong')"><span class="choice-letter">A</span> To prevent the other party from using emotional manipulation</button>
+              <button class="choice-btn" onclick="answerQuiz(1,'b','wrong')"><span class="choice-letter">B</span> Because personal issues should never be raised in professional negotiations</button>
+              <button class="choice-btn" onclick="answerQuiz(1,'c','correct')"><span class="choice-letter">C</span> So that emotional and relational tensions don't prevent rational problem-solving</button>
+              <button class="choice-btn" onclick="answerQuiz(1,'d','wrong')"><span class="choice-letter">D</span> To make negotiations more efficient by reducing small talk</button>
+            </div>
+            <div class="feedback-box" id="qz-1-fb"></div>
+          </div>
+        </div>
+
+        <div class="quiz-card" id="qz-2">
+          <div class="quiz-q-header"><span class="quiz-q-num">Question 3 of 8</span></div>
+          <div class="quiz-q-body">
+            <div class="quiz-question">A hotel guest insists on a room with a sea view. The hotel has none available. According to MGA, what is the best response?</div>
+            <div class="choices">
+              <button class="choice-btn" onclick="answerQuiz(2,'a','wrong')"><span class="choice-letter">A</span> Apologise and offer a 20% discount on the current room</button>
+              <button class="choice-btn" onclick="answerQuiz(2,'b','correct')"><span class="choice-letter">B</span> Ask why the sea view matters — then offer alternatives that address the underlying need (e.g., a quiet garden room with a balcony for relaxation)</button>
+              <button class="choice-btn" onclick="answerQuiz(2,'c','wrong')"><span class="choice-letter">C</span> Explain clearly that sea view rooms are not available and the booking cannot be changed</button>
+              <button class="choice-btn" onclick="answerQuiz(2,'d','wrong')"><span class="choice-letter">D</span> Upgrade the guest to a suite at no charge to resolve the complaint quickly</button>
+            </div>
+            <div class="feedback-box" id="qz-2-fb"></div>
+          </div>
+        </div>
+
+        <div class="quiz-card" id="qz-3">
+          <div class="quiz-q-header"><span class="quiz-q-num">Question 4 of 8</span></div>
+          <div class="quiz-q-body">
+            <div class="quiz-question">What does BATNA stand for?</div>
+            <div class="choices">
+              <button class="choice-btn" onclick="answerQuiz(3,'a','wrong')"><span class="choice-letter">A</span> Balanced Approach To Negotiation and Agreement</button>
+              <button class="choice-btn" onclick="answerQuiz(3,'b','correct')"><span class="choice-letter">B</span> Best Alternative To a Negotiated Agreement</button>
+              <button class="choice-btn" onclick="answerQuiz(3,'c','wrong')"><span class="choice-letter">C</span> Basic Alternative Tested in Negotiation Analysis</button>
+              <button class="choice-btn" onclick="answerQuiz(3,'d','wrong')"><span class="choice-letter">D</span> Benchmark Allowance for Trade-off and Negotiation Acceptance</button>
+            </div>
+            <div class="feedback-box" id="qz-3-fb"></div>
+          </div>
+        </div>
+
+        <div class="quiz-card" id="qz-4">
+          <div class="quiz-q-header"><span class="quiz-q-num">Question 5 of 8</span></div>
+          <div class="quiz-q-body">
+            <div class="quiz-question">In MGA, "generating options for mutual gain" requires:</div>
+            <div class="choices">
+              <button class="choice-btn" onclick="answerQuiz(4,'a','wrong')"><span class="choice-letter">A</span> Each party submitting three proposals before the first meeting</button>
+              <button class="choice-btn" onclick="answerQuiz(4,'b','wrong')"><span class="choice-letter">B</span> Focusing on the most realistic solutions to save time</button>
+              <button class="choice-btn" onclick="answerQuiz(4,'c','correct')"><span class="choice-letter">C</span> Separating the brainstorm phase from the evaluation phase — suspending judgment while inventing</button>
+              <button class="choice-btn" onclick="answerQuiz(4,'d','wrong')"><span class="choice-letter">D</span> Reaching agreement on a ZOPA before exploring options</button>
+            </div>
+            <div class="feedback-box" id="qz-4-fb"></div>
+          </div>
+        </div>
+
+        <div class="quiz-card" id="qz-5">
+          <div class="quiz-q-header"><span class="quiz-q-num">Question 6 of 8</span></div>
+          <div class="quiz-q-body">
+            <div class="quiz-question">The other party refuses to budge, saying "this is just how it has to be." The MGA response is:</div>
+            <div class="choices">
+              <button class="choice-btn" onclick="answerQuiz(5,'a','wrong')"><span class="choice-letter">A</span> Accept, as the other party's firmness signals their genuine limit</button>
+              <button class="choice-btn" onclick="answerQuiz(5,'b','wrong')"><span class="choice-letter">B</span> Match their firmness with equal pressure to show you won't be pushed around</button>
+              <button class="choice-btn" onclick="answerQuiz(5,'c','correct')"><span class="choice-letter">C</span> Ask for the principle or criteria behind their position — and only yield to a reasoned argument, not pressure</button>
+              <button class="choice-btn" onclick="answerQuiz(5,'d','wrong')"><span class="choice-letter">D</span> Take a break and return when both sides have cooled down</button>
+            </div>
+            <div class="feedback-box" id="qz-5-fb"></div>
+          </div>
+        </div>
+
+        <div class="quiz-card" id="qz-6">
+          <div class="quiz-q-header"><span class="quiz-q-num">Question 7 of 8</span></div>
+          <div class="quiz-q-body">
+            <div class="quiz-question">A strong BATNA means you should:</div>
+            <div class="choices">
+              <button class="choice-btn" onclick="answerQuiz(6,'a','wrong')"><span class="choice-letter">A</span> Immediately walk away if the first offer is below your ideal outcome</button>
+              <button class="choice-btn" onclick="answerQuiz(6,'b','wrong')"><span class="choice-letter">B</span> Reveal your BATNA early to signal strength</button>
+              <button class="choice-btn" onclick="answerQuiz(6,'c','wrong')"><span class="choice-letter">C</span> Demand more aggressively since you hold the power</button>
+              <button class="choice-btn" onclick="answerQuiz(6,'d','correct')"><span class="choice-letter">D</span> Negotiate confidently, knowing you can walk away without serious harm — and use that confidence to hold firm on principle</button>
+            </div>
+            <div class="feedback-box" id="qz-6-fb"></div>
+          </div>
+        </div>
+
+        <div class="quiz-card" id="qz-7">
+          <div class="quiz-q-header"><span class="quiz-q-num">Question 8 of 8</span></div>
+          <div class="quiz-q-body">
+            <div class="quiz-question">MGA is most different from traditional "positional" bargaining because:</div>
+            <div class="choices">
+              <button class="choice-btn" onclick="answerQuiz(7,'a','wrong')"><span class="choice-letter">A</span> It avoids conflict entirely by focusing only on shared interests</button>
+              <button class="choice-btn" onclick="answerQuiz(7,'b','wrong')"><span class="choice-letter">B</span> It always produces an agreement — no deals are walked away from</button>
+              <button class="choice-btn" onclick="answerQuiz(7,'c','correct')"><span class="choice-letter">C</span> It expands what's available before deciding how to divide it, instead of treating the negotiation as a zero-sum contest</button>
+              <button class="choice-btn" onclick="answerQuiz(7,'d','wrong')"><span class="choice-letter">D</span> It relies on a neutral third party to make final decisions</button>
+            </div>
+            <div class="feedback-box" id="qz-7-fb"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Results panel (hidden until quiz complete) -->
+      <div id="quiz-results" style="display:none; margin-top:var(--space-xl);">
+        <hr class="divider">
+        <div class="eyebrow">Results</div>
+        <h2 class="section-title">Your score</h2>
+        <div style="text-align:center; margin:var(--space-lg) 0;">
+          <div class="score-ring">
+            <svg viewBox="0 0 120 120" width="120" height="120">
+              <circle class="ring-bg" cx="60" cy="60" r="50"/>
+              <circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="314"/>
+            </svg>
+            <div class="score-num" id="score-num">0/8</div>
+          </div>
+        </div>
+        <div class="quiz-results-grid">
+          <div class="qr-tile">
+            <div class="qr-val" id="qr-correct">0</div>
+            <div class="qr-label">Correct answers</div>
+          </div>
+          <div class="qr-tile">
+            <div class="qr-val" style="color:var(--ink-mid)" id="qr-total">8</div>
+            <div class="qr-label">Total questions</div>
+          </div>
+        </div>
+        <div class="card" id="qr-message">
+          <p></p>
+        </div>
+        <button class="btn-primary" onclick="retakeQuiz()" style="margin-top:var(--space-md)">Retake quiz</button>
+        <button class="btn-secondary" onclick="showSection('overview', document.querySelector('[data-section=overview]'))" style="margin-top:var(--space-md); margin-left:0.75rem">Back to overview</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+// ── STATE ──
+const visited = new Set(['overview']);
+const quizAnswers = {};
+const scenarioAnswers = {};
+let quizComplete = false;
+
+const quizFeedback = {
+  0: { correct: "B", msg: "Correct. A position is the explicit stated demand — 'I want X'. The interest (why they want X) lies beneath it." },
+  1: { correct: "C", msg: "Exactly. Emotional and relational tension short-circuits rational problem-solving. By addressing both layers, MGA keeps the door open." },
+  2: { correct: "B", msg: "Right. 'Why do you want the sea view?' often reveals the real need: relaxation, quiet, light. A different room may satisfy it perfectly." },
+  3: { correct: "B", msg: "Correct. BATNA: Best Alternative To a Negotiated Agreement — the benchmark for knowing when to accept, and when to walk away." },
+  4: { correct: "C", msg: "Exactly. Premature evaluation kills creativity. MGA insists on a dedicated invention phase before any option is judged." },
+  5: { correct: "C", msg: "Correct. MGA says: never yield to pressure, only to principle. Ask 'what's your reasoning?' — if there is none, you don't need to move." },
+  6: { correct: "D", msg: "Right. A strong BATNA is about confidence and principled firmness — not aggression or premature walk-aways." },
+  7: { correct: "C", msg: "Exactly. Positional bargaining assumes a fixed pie. MGA enlarges it first by surfacing interests and inventing options — then divides." },
+};
+
+const scenarioFeedback = {
+  '0-0': {
+    'b': { ok: true, msg: "✓ Right. This is Principle 02 (Interests) and Principle 01 (Separate people/problem) in action. You open a collaborative dialogue rather than drawing battle lines. A cost breakdown might reveal options — maybe a phased increase, a longer contract, or a guaranteed volume that helps them absorb raw material costs." },
+    'default': { ok: false, msg: "✗ This response treats the negotiation as a contest rather than a joint problem. Option A creates a positional standoff. C is a tactical threat that may damage the relationship. D (splitting the difference) is lazy — it ignores whether 11% is actually fair to either party." }
+  },
+  '0-1': {
+    'b': { ok: true, msg: "✓ Correct. Beneath the 22% demand, Textiel BV's real interest is profitability security and retaining a client of six years. Understanding this opens options: guaranteed order volume, early payment terms, a multi-year contract — all of which address their interest without requiring you to pay 22% more." },
+    'default': { ok: false, msg: "✗ A supplier of six years seeking a large price increase is almost always trying to protect margins, not maximise them. Purely profit-driven motives are much rarer than they appear." }
+  },
+  '1-0': {
+    'c': { ok: true, msg: "✓ Right. MGA Principle 01: acknowledge the emotional temperature first (frustration is real), then surface the interests (what do you actually need the kitchen for?). You can't generate options until you understand what both parties genuinely need." },
+    'default': { ok: false, msg: "✗ Deciding who is 'right' based on hierarchy (A) generates resentment. Written proposals (B) entrench positions further. Telling people not to be emotional (D) is both ineffective and dismissive — it escalates, not calms." }
+  },
+  '1-1': {
+    'b': { ok: true, msg: "✓ Excellent. This is Principle 03 (Generate options) applied to a joint scheduling problem. When you map actual time needs, it often turns out both departments can fit — the conflict was over perceived territory, not actual hours." },
+    'default': { ok: false, msg: "✗ Option A (GM decision) skips the collaborative step and may produce a resentful compliance. Option C gives Events the win at F&B's expense — a zero-sum outcome MGA explicitly avoids." }
+  },
+  '2-0': {
+    'b': { ok: true, msg: "✓ Correct. Principle 01: separate the person from the problem. Ms. Verhagen is emotional and entitled to be. She cannot rationally evaluate any offer until she feels heard and respected. Acknowledge first, compensate second." },
+    'default': { ok: false, msg: "✗ Jumping straight to compensation (A) or policy explanation (C) skips the human element. Asking for written complaint (D) feels bureaucratic and dismissive to an already-frustrated guest." }
+  },
+  '2-1': {
+    'b': { ok: true, msg: "✓ Right. Research consistently shows that complaint escalations are driven by feeling dismissed, not by the financial loss itself. Address the experience and the relationship, and the financial resolution becomes far easier." },
+    'default': { ok: false, msg: "✗ Most guests demanding full refunds are expressing frustration about being ignored, not performing a calculated financial claim. The threat to post a review is a signal of powerlessness, not a primary goal." }
+  },
+  '3-0': {
+    'c': { ok: true, msg: "✓ Correct. Principle 04: objective criteria. Independent assessment of HVAC risk and marketing ROI removes the political dimension and gives the GM a principled basis for the decision — not a judgment call between two competing department heads." },
+    'default': { ok: false, msg: "✗ Splitting equally (A) ignores relative urgency and value. GM decision (B) is still subjective. Instinctive ranking (D) substitutes opinion for evidence." }
+  },
+  '3-1': {
+    'b': { ok: true, msg: "✓ Excellent. This is Principle 03 at its best: expand the pie before dividing it. The HVAC upgrade actually feeds into the marketing narrative. Lease financing unlocks budget without raiding reserves. Neither department 'loses' — both interests are addressed." },
+    'default': { ok: false, msg: "✗ Postponing Marketing (A) treats this as zero-sum. Asking both to cut back (C) splits the difference without solving either problem. Option B finds a creative structure that serves both." }
+  },
+};
+
+// ── NAVIGATION ──
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  visited.add(id);
+  updateProgress();
+
+  // close mobile sidebar
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.remove('mobile-open');
+  }
+}
+
+function toggleMobileSidebar() {
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+}
+
+function updateProgress() {
+  const total = 5;
+  const pct = Math.round((visited.size / total) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '% complete';
+
+  // Mark nav items done
+  const sectionOrder = ['overview','principles','batna','scenarios','quiz'];
+  sectionOrder.forEach(s => {
+    const btn = document.querySelector(`[data-section="${s}"]`);
+    if (btn && visited.has(s)) {
+      const existing = btn.querySelector('.nav-check');
+      if (!existing) {
+        const check = document.createElement('span');
+        check.className = 'nav-check';
+        check.textContent = '✓';
+        btn.appendChild(check);
+      }
+    }
+  });
+}
+
+// ── PRINCIPLES ──
+let openDetail = null;
+function togglePrinciple(id) {
+  const el = document.getElementById('detail-' + id);
+  if (openDetail && openDetail !== id) {
+    document.getElementById('detail-' + openDetail).classList.remove('open');
+  }
+  el.classList.toggle('open');
+  openDetail = el.classList.contains('open') ? id : null;
+  if (el.classList.contains('open')) {
+    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  }
+}
+
+// ── SCENARIOS ──
+let scenarioQProgress = {}; // sc-X -> question index done
+
+function showScenario(idx, btn) {
+  document.querySelectorAll('[id^="sc-"]').forEach(s => {
+    if (!s.id.includes('-q') && !s.id.includes('-next')) s.style.display = 'none';
+  });
+  document.getElementById('sc-' + idx).style.display = 'block';
+  document.querySelectorAll('.scenario-tab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('sc-' + idx).scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function answerScenario(sc, q, choice, verdict) {
+  const key = `${sc}-${q}`;
+  if (scenarioAnswers[key]) return; // already answered
+  scenarioAnswers[key] = choice;
+
+  const qEl = document.getElementById(`sc-${sc}-q${q}`);
+  const fbEl = document.getElementById(`sc-${sc}-q${q}-fb`);
+  const fb = scenarioFeedback[`${sc}-${q}`];
+  const fbData = fb[choice] || fb['default'];
+
+  // disable all choices
+  qEl.querySelectorAll('.choice-btn').forEach(btn => {
+    btn.disabled = true;
+    const letter = btn.querySelector('.choice-letter').textContent;
+    if (letter === choice.toUpperCase()) {
+      btn.classList.add(fbData.ok ? 'correct' : 'wrong');
+    }
+  });
+
+  fbEl.className = 'feedback-box ' + (fbData.ok ? 'correct' : 'wrong') + ' show';
+  fbEl.innerHTML = `<div class="fb-title">${fbData.ok ? '✓ Well done' : '✗ Not quite'}</div><p>${fbData.msg}</p>`;
+
+  // show next question or next button
+  if (q === 0) {
+    setTimeout(() => {
+      const next = document.getElementById(`sc-${sc}-q2`);
+      if (next) { next.style.display = 'block'; next.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+    }, 400);
+  } else {
+    setTimeout(() => {
+      const btn = document.getElementById(`sc-${sc}-next`);
+      if (btn) { btn.classList.add('show'); btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+      // mark scenario tab done
+      const tabs = document.querySelectorAll('.scenario-tab');
+      if (tabs[sc]) tabs[sc].classList.add('done');
+    }, 400);
+  }
+}
+
+// ── QUIZ ──
+function answerQuiz(q, choice, verdict) {
+  if (quizAnswers[q] !== undefined) return;
+  quizAnswers[q] = choice;
+
+  const fb = quizFeedback[q];
+  const isCorrect = choice === fb.correct.toLowerCase();
+  const qEl = document.getElementById('qz-' + q);
+  const fbEl = document.getElementById('qz-' + q + '-fb');
+
+  qEl.querySelectorAll('.choice-btn').forEach(btn => {
+    btn.disabled = true;
+    const letter = btn.querySelector('.choice-letter').textContent.toLowerCase();
+    if (letter === choice) btn.classList.add(isCorrect ? 'correct' : 'wrong');
+    if (!isCorrect && letter === fb.correct.toLowerCase()) btn.classList.add('missed');
+  });
+
+  fbEl.className = 'feedback-box ' + (isCorrect ? 'correct' : 'wrong') + ' show';
+  fbEl.innerHTML = `<div class="fb-title">${isCorrect ? '✓ Correct' : '✗ Incorrect'}</div><p>${fb.msg}</p>`;
+
+  // Check if all answered
+  if (Object.keys(quizAnswers).length === 8 && !quizComplete) {
+    quizComplete = true;
+    setTimeout(showQuizResults, 500);
+  }
+}
+
+function showQuizResults() {
+  const correct = Object.entries(quizAnswers).filter(([q, a]) => a === quizFeedback[+q].correct.toLowerCase()).length;
+  const total = 8;
+  const pct = correct / total;
+
+  document.getElementById('quiz-results').style.display = 'block';
+  document.getElementById('score-num').textContent = `${correct}/${total}`;
+  document.getElementById('qr-correct').textContent = correct;
+  document.getElementById('quiz-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Animate ring
+  const circumference = 314;
+  const offset = circumference * (1 - pct);
+  setTimeout(() => {
+    document.getElementById('ring-fill').style.strokeDashoffset = offset;
+  }, 100);
+
+  // Message
+  let msg = '';
+  if (pct === 1) msg = '<strong>Perfect score.</strong> You have a thorough grasp of MGA — the principles, the concepts, and how to apply them. Consider running a practice negotiation with a partner.';
+  else if (pct >= 0.75) msg = '<strong>Strong result.</strong> You understand the core of MGA well. Review the questions you missed and revisit the relevant principle — then try the scenarios again.';
+  else if (pct >= 0.5) msg = '<strong>Good foundation.</strong> You have the key concepts but some areas need reinforcement. Work through the Principles and BATNA sections again before re-taking this quiz.';
+  else msg = '<strong>Keep going.</strong> MGA has a learning curve — start by re-reading the Overview and Principles sections carefully, then return to this quiz.';
+
+  document.querySelector('#qr-message p').innerHTML = msg;
+  visited.add('quiz');
+  updateProgress();
+}
+
+function retakeQuiz() {
+  // Reset
+  Object.keys(quizAnswers).forEach(k => delete quizAnswers[k]);
+  quizComplete = false;
+  document.getElementById('quiz-results').style.display = 'none';
+  document.getElementById('ring-fill').style.strokeDashoffset = '314';
+
+  for (let i = 0; i < 8; i++) {
+    const qEl = document.getElementById('qz-' + i);
+    const fbEl = document.getElementById('qz-' + i + '-fb');
+    qEl.querySelectorAll('.choice-btn').forEach(b => {
+      b.disabled = false;
+      b.classList.remove('correct','wrong','missed');
+    });
+    fbEl.className = 'feedback-box';
+    fbEl.innerHTML = '';
+  }
+  document.getElementById('quiz-questions').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Init
+updateProgress();
+</script>
+</body>
+</html>
