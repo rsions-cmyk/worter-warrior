@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a1a">
+<title>Wörter Warrior 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#ff2d95; --blue:#00f0ff; --green:#39ff14; --yellow:#fff01f; --orange:#ff9500; --purple:#bf5fff; --red:#ff3366; --gold:#ffd700;
+  --der:#3ec5ff; --die:#ff4fa3; --das:#4dff7a;
+  --bg:#0a0a1a; --card:#16162b; --card-2:#1f1f3a; --line:rgba(255,255,255,.10);
+  --text:#f4f4ff; --muted:rgba(244,244,255,.64); --faint:rgba(244,244,255,.38);
+  --f-display:'Bangers',Impact,'Arial Black',sans-serif;
+  --f-body:'Nunito',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --r:12px; --r-lg:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html{font-size:16px}
+body{font-family:var(--f-body);background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;overflow-x:hidden;line-height:1.5}
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(ellipse at 15% 85%,rgba(255,45,149,.16),transparent 55%),
+             radial-gradient(ellipse at 85% 10%,rgba(0,240,255,.14),transparent 55%),var(--bg)}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none;touch-action:manipulation}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+
+/* ── Header ── */
+.header{position:sticky;top:0;z-index:50;background:rgba(14,14,32,.93);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:2px solid var(--pink)}
+.header-inner{max-width:680px;margin:0 auto;padding:.6rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap}
+.logo{font-family:var(--f-display);font-size:clamp(1.2rem,5vw,1.65rem);letter-spacing:1px;cursor:pointer;
+  background:linear-gradient(90deg,var(--pink),var(--blue));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.logo .v{-webkit-text-fill-color:var(--yellow);font-size:.75em;vertical-align:.25em;margin-left:.15em}
+.stats{display:flex;gap:.4rem;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .6rem;border-radius:999px;background:rgba(255,255,255,.07);font-weight:800;font-size:.85rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+.chip.xp{color:var(--gold)} .chip.day{color:var(--orange)}
+.lvl{padding:.3rem .7rem;border-radius:999px;background:linear-gradient(135deg,var(--pink),var(--blue));font-weight:900;font-size:.82rem;white-space:nowrap}
+.lvlbar{height:3px;background:rgba(255,255,255,.06)}
+.lvlbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--blue));transition:width .6s}
+
+.wrap{max-width:640px;margin:0 auto;padding:1rem 1rem 3rem}
+.screen{display:none}
+.screen.on{display:block;animation:in .25s ease}
+@keyframes in{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── Home ── */
+.hero{text-align:center;padding:1.1rem 0 1rem}
+.hero h1{font-family:var(--f-display);font-weight:400;font-size:clamp(2.4rem,12vw,3.8rem);letter-spacing:2px;line-height:1;
+  background:linear-gradient(90deg,var(--pink),var(--yellow),var(--blue));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero .sub{color:var(--muted);margin-top:.4rem}
+.hero .rank{margin-top:.6rem;display:inline-block;padding:.25rem .8rem;border-radius:999px;border:1px solid rgba(255,215,0,.35);color:var(--gold);font-weight:800;font-size:.85rem}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1rem 1.1rem;margin-bottom:.8rem}
+.m-top{display:flex;justify-content:space-between;align-items:baseline;font-weight:800;margin-bottom:.5rem}
+.m-top b{font-size:1.3rem;color:var(--green);font-variant-numeric:tabular-nums}
+.mbar{display:flex;height:12px;border-radius:99px;overflow:hidden;background:rgba(255,255,255,.08)}
+.mbar i{display:block;height:100%;transition:width .6s}
+.mbar .mm{background:var(--green)} .mbar .ml{background:var(--orange)}
+.legend{display:flex;flex-wrap:wrap;gap:.3rem 1rem;margin-top:.55rem;font-size:.82rem;color:var(--muted)}
+.legend span::before{content:'';display:inline-block;width:.6rem;height:.6rem;border-radius:50%;margin-right:.35rem;vertical-align:0}
+.legend .lm::before{background:var(--green)} .legend .ll::before{background:var(--orange)} .legend .ln::before{background:rgba(255,255,255,.25)}
+.set{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.set + .set{margin-top:.7rem}
+.set .lab{font-weight:800;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);min-width:5.5rem}
+.seg{display:flex;flex:1;min-width:0;background:rgba(255,255,255,.05);border-radius:10px;padding:3px;gap:3px}
+.seg button{flex:1;padding:.5rem .3rem;border-radius:8px;font-weight:800;font-size:.88rem;color:var(--muted);white-space:nowrap}
+.seg button.on{background:linear-gradient(135deg,var(--pink),var(--blue));color:#fff}
+.weak{display:flex;align-items:center;justify-content:space-between;gap:.6rem;width:100%;padding:.85rem 1.1rem;margin-bottom:.8rem;border-radius:var(--r-lg);
+  background:linear-gradient(135deg,rgba(255,149,0,.18),rgba(255,45,149,.18));border:2px solid rgba(255,149,0,.55);font-weight:800;text-align:left}
+.weak small{display:block;font-weight:600;color:var(--muted)}
+.modes{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
+.mode{--c:var(--pink);text-align:left;padding:1rem;border-radius:var(--r-lg);background:var(--card);
+  border:2px solid color-mix(in srgb,var(--c) 45%,transparent);display:flex;flex-direction:column;gap:.2rem;transition:transform .15s,box-shadow .15s}
+.mode:hover{transform:translateY(-2px);box-shadow:0 0 24px color-mix(in srgb,var(--c) 35%,transparent)}
+.mode .ico{font-size:1.5rem;line-height:1.2}
+.mode .t{font-family:var(--f-display);font-size:1.4rem;letter-spacing:.5px;color:var(--c);line-height:1.1}
+.mode .d{font-size:.82rem;color:var(--muted);line-height:1.35}
+.mode .new{align-self:flex-start;margin-top:.3rem;font-size:.66rem;font-weight:900;letter-spacing:.08em;padding:.1rem .45rem;border-radius:5px;background:var(--yellow);color:#111}
+.foot{text-align:center;margin-top:1.5rem}
+.linkish{color:var(--faint);font-size:.85rem;text-decoration:underline;text-underline-offset:3px;padding:.4rem}
+.linkish:hover{color:var(--muted)}
+
+/* ── Play ── */
+.topline{display:flex;align-items:center;gap:.55rem;margin-bottom:.85rem}
+.pbar{flex:1;height:10px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--blue));transition:width .4s}
+.pbar.timer i{background:linear-gradient(90deg,var(--pink),var(--orange));transition:none}
+.count{font-weight:800;font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.x{width:2.1rem;height:2.1rem;border-radius:50%;background:rgba(255,255,255,.08);color:var(--muted);font-weight:900;flex-shrink:0}
+.x:hover{color:#fff;background:rgba(255,255,255,.15)}
+.qcard{background:var(--card);border:2px solid var(--line);border-radius:var(--r-lg);padding:1.2rem;box-shadow:0 10px 40px rgba(0,0,0,.35);transition:box-shadow .15s,border-color .15s}
+.qcard.hit-ok{border-color:var(--green);box-shadow:0 0 28px rgba(57,255,20,.35)}
+.qcard.hit-bad{border-color:var(--red);box-shadow:0 0 28px rgba(255,51,102,.35)}
+.badge{display:block;text-align:center;padding:.7rem;border-radius:12px;font-weight:900;letter-spacing:.5px;font-size:clamp(.85rem,3.8vw,1.05rem)}
+.badge.nlde{background:linear-gradient(135deg,#ff6b35,var(--pink));box-shadow:0 0 18px rgba(255,107,53,.4)}
+.badge.denl{background:linear-gradient(135deg,#00b4d8,#0077b6);box-shadow:0 0 18px rgba(0,180,216,.4)}
+.badge.cloze{background:linear-gradient(135deg,var(--purple),#6d3bff);box-shadow:0 0 18px rgba(191,95,255,.4)}
+.badge.art{background:linear-gradient(135deg,#ffb300,var(--orange));color:#1a0d00;box-shadow:0 0 18px rgba(255,149,0,.4)}
+.prompt{font-size:clamp(1.5rem,6.5vw,2.1rem);font-weight:900;text-align:center;margin:1.1rem 0 .25rem;line-height:1.25;word-break:break-word;
+  display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap}
+.prompt.sentence{font-size:clamp(1.15rem,4.8vw,1.45rem);font-weight:700;display:block}
+.prompt.sentence .speak{vertical-align:middle;margin-left:.3rem}
+.blank{display:inline-block;min-width:4.5em;border-bottom:3px dashed var(--purple);color:var(--purple);text-align:center}
+.hint{text-align:center;color:var(--muted);font-size:.88rem;margin-bottom:.9rem}
+.hint b{color:var(--text)}
+.speak{width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(255,255,255,.09);font-size:1rem;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.speak:hover{background:rgba(0,240,255,.2)}
+.speak.sm{width:1.8rem;height:1.8rem;font-size:.85rem}
+.answer{width:100%;padding:.95rem 1rem;font-size:1.1rem;font-family:inherit;border:2px solid rgba(255,255,255,.18);border-radius:12px;background:rgba(255,255,255,.06);color:var(--text);outline:none;-webkit-appearance:none;appearance:none}
+.answer:focus{border-color:var(--blue);box-shadow:0 0 15px rgba(0,240,255,.3)}
+.answer::placeholder{color:var(--faint)}
+.answer:disabled{opacity:.6}
+.answer.shake{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.keys{display:flex;gap:.4rem;margin:.55rem 0 .9rem}
+.key{flex:1;padding:.5rem 0;border-radius:10px;background:rgba(255,255,255,.07);font-weight:800;font-size:1.1rem;border:1px solid var(--line)}
+.key:hover{background:rgba(255,255,255,.14)}
+.actions{display:flex;gap:.6rem}
+.btn{padding:.9rem 1.2rem;border-radius:12px;font-weight:900;font-size:1rem;transition:transform .1s,filter .15s;text-align:center}
+.btn:hover{filter:brightness(1.08)}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.primary{flex:1;background:linear-gradient(135deg,var(--pink),#ff6b6b);color:#fff}
+.btn.ghost{background:rgba(255,255,255,.07);color:var(--muted);border:1px solid var(--line)}
+.btn.blue{background:linear-gradient(135deg,var(--blue),#4facfe);color:#04121c}
+.btn.green{background:linear-gradient(135deg,var(--green),#00b09b);color:#04150a}
+.btn.orange{background:linear-gradient(135deg,var(--orange),#ff6b6b);color:#fff}
+.btn.wide{width:100%}
+
+/* feedback */
+.fb{display:none;margin-top:1rem;padding:1rem;border-radius:12px;border:2px solid}
+.fb.on{display:block;animation:in .2s ease}
+.fb.ok{background:rgba(57,255,20,.10);border-color:var(--green)}
+.fb.meh{background:rgba(255,149,0,.12);border-color:var(--orange)}
+.fb.bad{background:rgba(255,51,102,.12);border-color:var(--red)}
+.fb-h{font-size:1.15rem;font-weight:900;margin-bottom:.35rem}
+.fb.ok .fb-h{color:var(--green)} .fb.meh .fb-h{color:var(--orange)} .fb.bad .fb-h{color:var(--red)}
+.fb-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;font-size:.98rem;margin:.2rem 0}
+.fb-row .k{color:var(--muted);min-width:7.5rem;font-size:.85rem}
+.fb-row s{color:var(--muted)}
+.fb-row .good{font-weight:900;color:var(--blue)}
+.tip{margin-top:.6rem;padding:.6rem .75rem;background:rgba(255,255,255,.05);border-radius:8px;border-left:3px solid var(--orange);font-size:.92rem}
+.tip b{color:var(--yellow)}
+.ctx{margin-top:.6rem;padding:.6rem .75rem;background:rgba(255,255,255,.05);border-radius:8px;border-left:3px solid var(--blue);font-size:.92rem;font-style:italic;display:flex;gap:.5rem;align-items:center;justify-content:space-between}
+.ctx mark{background:rgba(0,240,255,.18);color:var(--blue);font-style:normal;font-weight:800;padding:0 .2em;border-radius:4px}
+.fb-actions{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-top:.85rem}
+
+/* article colours — der/die/das in its own colour everywhere */
+.art{font-weight:900}
+.art-der{color:var(--der)} .art-die{color:var(--die)} .art-das{color:var(--das)}
+
+/* multiple choice */
+.opts{display:grid;gap:.6rem;margin-top:.3rem}
+.opt{display:flex;gap:.75rem;align-items:center;text-align:left;padding:.85rem 1rem;border-radius:12px;background:rgba(255,255,255,.05);border:2px solid var(--line);font-weight:700;font-size:1.02rem;transition:border-color .15s,background .15s}
+.opt:hover:not(:disabled){border-color:rgba(0,240,255,.5);background:rgba(0,240,255,.06)}
+.opt:disabled{cursor:default}
+.opt kbd{font-family:inherit;font-size:.75rem;font-weight:900;width:1.6rem;height:1.6rem;flex-shrink:0;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.1);color:var(--muted)}
+.opt.ok{border-color:var(--green);background:rgba(57,255,20,.12)}
+.opt.bad{border-color:var(--red);background:rgba(255,51,102,.12)}
+.opt.dim{opacity:.45}
+
+/* flashcards */
+.flash-wrap{perspective:1200px;margin:.2rem 0 1rem}
+.flash{display:grid;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);cursor:pointer;outline:none}
+.flash.noanim{transition:none}
+.flash.flipped{transform:rotateY(180deg)}
+.flash:focus-visible .face{outline:3px solid var(--yellow);outline-offset:2px}
+.face{grid-area:1/1;-webkit-backface-visibility:hidden;backface-visibility:hidden;min-height:270px;border-radius:var(--r-lg);padding:1.5rem;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.face.front{background:var(--card);border:3px solid var(--purple)}
+.face.back{background:linear-gradient(135deg,#251a3d,#0f2a3a);border:3px solid var(--blue);transform:rotateY(180deg)}
+.flang{font-size:.82rem;font-weight:800;padding:.3rem .9rem;border-radius:99px;background:rgba(255,255,255,.1)}
+.fword{font-size:clamp(1.5rem,7vw,2.2rem);font-weight:900;line-height:1.25;word-break:break-word;display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap}
+.fhint{font-size:.82rem;color:var(--faint)}
+.fctx{font-size:.88rem;color:var(--muted);font-style:italic;padding:.6rem .8rem;background:rgba(255,255,255,.05);border-radius:10px;border-left:3px solid var(--blue);text-align:left;width:100%}
+.f-actions .btn{flex:1}
+.kbd-hint{text-align:center;color:var(--faint);font-size:.8rem;margin-top:.8rem}
+
+/* sprint */
+.s-score{display:flex;justify-content:space-between;align-items:center;margin:.9rem 0 0;font-weight:800;color:var(--muted)}
+.s-score b{color:var(--text);font-size:1.4rem;font-variant-numeric:tabular-nums}
+.s-combo{color:var(--yellow);font-weight:900}
+.s-word{font-size:clamp(1.8rem,8vw,2.6rem);font-weight:900;text-align:center;margin:1rem 0 .2rem;min-height:3.3rem;word-break:break-word}
+.s-word .art{margin-right:.25em}
+.art-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-top:.4rem}
+.abtn{padding:1.1rem 0;border-radius:14px;font-family:var(--f-display);font-size:1.9rem;letter-spacing:1px;border:2px solid;transition:transform .08s}
+.abtn:active{transform:scale(.96)}
+.abtn.der{color:var(--der);border-color:var(--der);background:rgba(62,197,255,.1)}
+.abtn.die{color:var(--die);border-color:var(--die);background:rgba(255,79,163,.1)}
+.abtn.das{color:var(--das);border-color:var(--das);background:rgba(77,255,122,.1)}
+.abtn kbd{display:block;font-family:var(--f-body);font-size:.7rem;font-weight:800;color:var(--faint);letter-spacing:0}
+.legend-art{text-align:center;font-size:.85rem;color:var(--muted);margin-top:.9rem}
+
+/* results */
+.rs-head{text-align:center;padding:.6rem 0 .2rem}
+.rs-head h2{font-family:var(--f-display);font-weight:400;font-size:clamp(2rem,9vw,2.8rem);letter-spacing:1.5px;line-height:1.05;
+  background:linear-gradient(90deg,var(--pink),var(--blue));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.rs-head p{color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin:1rem 0}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:.85rem .4rem;text-align:center}
+.tile b{display:block;font-size:1.6rem;font-weight:900;line-height:1.1;font-variant-numeric:tabular-nums}
+.tile span{font-size:.75rem;color:var(--muted)}
+.r-extra{text-align:center;font-weight:800;margin-bottom:.8rem}
+.rlist{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:.9rem 1rem;margin-bottom:.7rem;max-height:260px;overflow-y:auto}
+.rlist h3{font-size:.95rem;margin-bottom:.4rem}
+.rlist.bad h3{color:var(--red)} .rlist.meh h3{color:var(--orange)} .rlist.ok h3{color:var(--green)}
+.rrow{padding:.4rem 0;border-bottom:1px solid var(--line);font-size:.9rem}
+.rrow:last-child{border-bottom:none}
+.rrow small{display:block;color:var(--faint)}
+.r-tips{background:linear-gradient(135deg,rgba(255,45,149,.1),rgba(0,240,255,.1));border-radius:var(--r);padding:.9rem 1.1rem;margin-bottom:.8rem}
+.r-tips h3{color:var(--yellow);font-size:.95rem;margin-bottom:.4rem}
+.r-tips ul{padding-left:1.1rem;font-size:.9rem}
+.r-tips li{margin:.25rem 0}
+.r-btns{display:flex;flex-direction:column;gap:.55rem}
+
+/* word list */
+.list-head{display:flex;align-items:center;gap:.7rem;margin-bottom:.8rem}
+.list-head h2{font-family:var(--f-display);font-weight:400;font-size:1.9rem;letter-spacing:1px;color:var(--blue)}
+.list-head .count{margin-left:auto}
+.filters{display:flex;gap:.4rem;flex-wrap:wrap;margin:.7rem 0}
+.filters button{padding:.35rem .8rem;border-radius:99px;border:1px solid var(--line);font-weight:800;font-size:.82rem;color:var(--muted)}
+.filters button.on{background:rgba(0,240,255,.14);border-color:var(--blue);color:#fff}
+.wlist{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:.2rem 1rem}
+.wrow{display:flex;align-items:center;gap:.7rem;padding:.65rem 0;border-bottom:1px solid var(--line)}
+.wrow:last-child{border-bottom:none}
+.wtext{flex:1;min-width:0}
+.wtext .de{font-weight:800;word-break:break-word}
+.wtext .nl{font-size:.85rem;color:var(--muted)}
+.dots{display:flex;gap:3px;flex-shrink:0}
+.dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.15)}
+.dots i.on{background:var(--green)}
+.empty{padding:1.5rem 0;text-align:center;color:var(--muted)}
+
+/* overlays */
+.xp-pop{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%) scale(0);font-family:var(--f-display);font-size:clamp(2rem,10vw,3rem);color:var(--gold);
+  text-shadow:0 0 30px rgba(255,215,0,.8);z-index:1000;pointer-events:none}
+.xp-pop.meh{color:var(--orange)}
+.xp-pop.go{animation:pop 1s ease forwards}
+@keyframes pop{0%{transform:translate(-50%,-50%) scale(0);opacity:1}45%{transform:translate(-50%,-50%) scale(1.25);opacity:1}100%{transform:translate(-50%,-80%) scale(1);opacity:0}}
+.overlay{position:fixed;inset:0;background:rgba(5,5,15,.94);display:flex;align-items:center;justify-content:center;z-index:2000;padding:1rem;animation:in .3s ease}
+.ov-in{text-align:center;display:flex;flex-direction:column;align-items:center;gap:.4rem}
+.ov-t{font-family:var(--f-display);font-size:clamp(2.2rem,11vw,4rem);letter-spacing:2px;background:linear-gradient(90deg,var(--gold),var(--yellow));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.ov-n{font-family:var(--f-display);font-size:clamp(4rem,18vw,6.5rem);line-height:1}
+.ov-title{font-size:1.2rem;color:var(--muted);margin-bottom:1.2rem}
+
+@media (max-width:420px){
+  .tiles{grid-template-columns:repeat(2,1fr)}
+  .set .lab{min-width:0;width:100%}
+  .fb-row .k{min-width:0;width:100%}
+}
+@media (max-width:360px){ .modes{grid-template-columns:1fr} }
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="logo" id="logo" role="button" tabindex="0" aria-label="Naar het menu">⚔️ WÖRTER WARRIOR<span class="v">2</span></div>
+    <div class="stats">
+      <span class="chip xp" title="Totaal XP">⭐ <span id="h-xp">0</span></span>
+      <span class="chip day" title="Dagen op rij geoefend">🔥 <span id="h-day">0</span></span>
+      <span class="lvl" id="h-lvl">Lv 1</span>
+    </div>
+  </div>
+  <div class="lvlbar"><i id="h-lvlbar"></i></div>
+</header>
+
+<main class="wrap">
+
+  <!-- HOME -->
+  <section class="screen on" id="scr-home">
+    <div class="hero">
+      <h1>WÖRTER WARRIOR</h1>
+      <p class="sub">Horeca-Duits · Hoofdstuk 1 · <span id="n-words">0</span> woorden</p>
+      <span class="rank" id="rank">Level 1 · Receptie Rookie</span>
+    </div>
+
+    <div class="panel">
+      <div class="m-top"><span>Jouw woordkennis</span><b id="m-pct">0%</b></div>
+      <div class="mbar"><i class="mm" id="m-mm"></i><i class="ml" id="m-ml"></i></div>
+      <div class="legend"><span class="lm">Beheerst <b id="m-n-m">0</b></span><span class="ll">Lerend <b id="m-n-l">0</b></span><span class="ln">Nieuw <b id="m-n-n">0</b></span></div>
+    </div>
+
+    <div class="panel">
+      <div class="set"><span class="lab">Richting</span>
+        <div class="seg" id="seg-dir">
+          <button data-v="nl-de">🇳🇱 → 🇩🇪</button><button data-v="de-nl">🇩🇪 → 🇳🇱</button><button data-v="mix">🔀 Mix</button>
+        </div>
+      </div>
+      <div class="set"><span class="lab">Sessie</span>
+        <div class="seg" id="seg-len">
+          <button data-v="10">10</button><button data-v="20">20</button><button data-v="30">30</button><button data-v="all">Alles</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="weak" id="weak-btn" hidden>
+      <span>🎯 Train je zwakke woorden<small id="weak-sub">Woorden die je vaak fout had</small></span><span>→</span>
+    </button>
+
+    <div class="modes">
+      <button class="mode" data-mode="typed" style="--c:var(--pink)">
+        <span class="ico">⌨️</span><span class="t">Typen</span>
+        <span class="d">Typ de vertaling. Lidwoord, hoofdletter en Umlaut tellen mee.</span>
+      </button>
+      <button class="mode" data-mode="mc" style="--c:var(--blue)">
+        <span class="ico">🎯</span><span class="t">Meerkeuze</span>
+        <span class="d">Kies uit vier opties. Snel opwarmen, met lidwoord-valstrikken.</span>
+        <span class="new">NIEUW</span>
+      </button>
+      <button class="mode" data-mode="flash" style="--c:var(--purple)">
+        <span class="ico">🃏</span><span class="t">Flashcards</span>
+        <span class="d">Draai, check jezelf. "Nog niet" komt later terug.</span>
+      </button>
+      <button class="mode" data-mode="sprint" style="--c:var(--orange)">
+        <span class="ico">⚡</span><span class="t">Lidwoord-sprint</span>
+        <span class="d">60 seconden: der, die of das? <span id="best-sprint"></span></span>
+        <span class="new">NIEUW</span>
+      </button>
+      <button class="mode" data-mode="cloze" style="--c:var(--green)">
+        <span class="ico">🧩</span><span class="t">Zinnen</span>
+        <span class="d">Vul het ontbrekende woord in een echte hotelzin in.</span>
+        <span class="new">NIEUW</span>
+      </button>
+      <button class="mode" data-mode="list" style="--c:var(--yellow)">
+        <span class="ico">📚</span><span class="t">Woordenlijst</span>
+        <span class="d">Alle woorden, je voortgang per woord en uitspraak.</span>
+      </button>
+    </div>
+
+    <p class="foot"><button class="linkish" id="reset-btn">Voortgang wissen</button></p>
+  </section>
+
+  <!-- PLAY (typed / multiple choice / cloze) -->
+  <section class="screen" id="scr-play">
+    <div class="topline">
+      <div class="pbar"><i id="p-bar"></i></div>
+      <span class="count" id="p-count">1/10</span>
+      <span class="chip" id="p-streak" style="color:var(--pink)">🎯 0</span>
+      <button class="x" id="p-stop" aria-label="Stoppen en resultaten bekijken">✕</button>
+    </div>
+    <div class="qcard" id="p-card">
+      <div class="badge" id="p-badge"></div>
+      <div class="prompt" id="p-prompt"></div>
+      <p class="hint" id="p-hint"></p>
+      <div id="typed-area">
+        <input class="answer" id="p-input" type="text" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Jouw antwoord">
+        <div class="keys" id="p-keys">
+          <button class="key" data-k="ä">ä</button><button class="key" data-k="ö">ö</button><button class="key" data-k="ü">ü</button><button class="key" data-k="ß">ß</button>
+        </div>
+        <div class="actions">
+          <button class="btn ghost" id="p-skip">Weet ik niet</button>
+          <button class="btn primary" id="p-check">Check! ⚡</button>
+        </div>
+      </div>
+      <div class="opts" id="mc-area"></div>
+      <div class="fb" id="p-fb">
+        <div class="fb-h" id="fb-h"></div>
+        <div id="fb-body"></div>
+        <div class="fb-actions">
+          <button class="btn blue" id="p-next">Volgende →</button>
+          <button class="linkish" id="p-override">Mijn antwoord was ook goed</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section class="screen" id="scr-flash">
+    <div class="topline">
+      <div class="pbar"><i id="f-bar"></i></div>
+      <span class="count" id="f-count">1/10</span>
+      <span class="chip" style="color:var(--green)" title="Gekend">✅ <span id="f-known">0</span></span>
+      <span class="chip" style="color:var(--orange)" title="Nog niet">🔄 <span id="f-hard">0</span></span>
+      <button class="x" id="f-stop" aria-label="Stoppen en resultaten bekijken">✕</button>
+    </div>
+    <div class="flash-wrap">
+      <div class="flash" id="f-card" tabindex="0" role="button" aria-label="Draai de kaart om">
+        <div class="face front">
+          <span class="flang" id="f-lang1"></span>
+          <div class="fword" id="f-word1"></div>
+          <span class="fhint">Tik om te draaien</span>
+        </div>
+        <div class="face back">
+          <span class="flang" id="f-lang2"></span>
+          <div class="fword" id="f-word2"></div>
+          <div class="fctx" id="f-ctx"></div>
+        </div>
+      </div>
+    </div>
+    <div class="actions f-actions">
+      <button class="btn orange" id="f-later">⏳ Nog niet</button>
+      <button class="btn green" id="f-knew">✅ Ken ik!</button>
+    </div>
+    <p class="kbd-hint">Spatie = draaien · ← nog niet · → ken ik</p>
+  </section>
+
+  <!-- SPRINT -->
+  <section class="screen" id="scr-sprint">
+    <div class="topline">
+      <div class="pbar timer"><i id="s-bar"></i></div>
+      <span class="count" id="s-time">60s</span>
+      <button class="x" id="s-stop" aria-label="Stoppen">✕</button>
+    </div>
+    <div class="qcard" id="s-card">
+      <div class="badge art">⚡ LIDWOORD-SPRINT</div>
+      <div class="s-score"><span>Score <b id="s-score">0</b></span><span class="s-combo" id="s-combo"></span></div>
+      <div class="s-word" id="s-word">Klaar?</div>
+      <p class="hint" id="s-hint"></p>
+      <div class="art-btns" id="s-btns" hidden>
+        <button class="abtn der" data-a="der">der<kbd>1</kbd></button>
+        <button class="abtn die" data-a="die">die<kbd>2</kbd></button>
+        <button class="abtn das" data-a="das">das<kbd>3</kbd></button>
+      </div>
+      <button class="btn primary wide" id="s-start">START ⚡</button>
+    </div>
+    <p class="legend-art"><span class="art art-der">der</span> mannelijk · <span class="art art-die">die</span> vrouwelijk · <span class="art art-das">das</span> onzijdig</p>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="screen" id="scr-results">
+    <div class="rs-head"><h2 id="r-title">RESULTATEN</h2><p id="r-sub"></p></div>
+    <div class="tiles" id="r-tiles"></div>
+    <p class="r-extra" id="r-extra"></p>
+    <div id="r-lists"></div>
+    <div class="r-tips" id="r-tips" hidden></div>
+    <div class="r-btns" id="r-btns"></div>
+  </section>
+
+  <!-- WORD LIST -->
+  <section class="screen" id="scr-list">
+    <div class="list-head">
+      <button class="x" id="l-back" aria-label="Terug naar menu">←</button>
+      <h2>Woordenlijst</h2>
+      <span class="count" id="l-count"></span>
+    </div>
+    <input class="answer" id="l-q" type="search" placeholder="Zoek in het Nederlands of Duits…" autocomplete="off" aria-label="Zoek een woord">
+    <div class="filters" id="l-filters">
+      <button data-f="all" class="on">Alle</button><button data-f="new">Nieuw</button><button data-f="learn">Lerend</button><button data-f="mast">Beheerst</button>
+    </div>
+    <div class="wlist" id="l-rows"></div>
+  </section>
+
+</main>
+
+<div class="xp-pop" id="xp-pop">+10 XP</div>
+<div class="overlay" id="lvl-ov" hidden>
+  <div class="ov-in">
+    <div class="ov-t">🎉 LEVEL UP! 🎉</div>
+    <div class="ov-n" id="ov-n">2</div>
+    <div class="ov-title" id="ov-title">Bagagedrager</div>
+    <button class="btn blue" id="ov-close">Nice! Doorgaan →</button>
+  </div>
+</div>
+
+<script>
+/* ═════════ WOORDEN — Hoofdstuk 1 ═════════ */
+const RAW = [
+  {nl:"Geachte heer…",de:"Sehr geehrter Herr…,",alt_de:["sehr geehrter herr"],alt_nl:["geachte heer"],ctx:"Sehr geehrter Herr Schmidt, vielen Dank für Ihre Anfrage."},
+  {nl:"Geachte mevrouw…",de:"Sehr geehrte Frau…,",alt_de:["sehr geehrte frau"],alt_nl:["geachte mevrouw"],ctx:"Sehr geehrte Frau Müller, wir bestätigen Ihre Reservierung."},
+  {nl:"Geachte dames en heren",de:"Sehr geehrte Damen und Herren",alt_de:[],alt_nl:[],ctx:"Sehr geehrte Damen und Herren, wir freuen uns auf Ihren Besuch."},
+  {nl:"betreft",de:"Betreff",alt_de:["der betreff"],alt_nl:["het betreft"],ctx:"Betreff: Ihre Reservierung vom 15. März"},
+  {nl:"in opdracht van",de:"im Auftrag (i.A.)",alt_de:["im auftrag","i.a."],alt_nl:["i.o.v."],ctx:"Im Auftrag des Direktors sende ich Ihnen die Bestätigung."},
+  {nl:"uw aanvraag",de:"Ihre Anfrage",alt_de:["die anfrage"],alt_nl:["de aanvraag"],ctx:"Vielen Dank für Ihre Anfrage bezüglich unserer Zimmerpreise."},
+  {nl:"het spijt ons",de:"es tut uns sehr leid",alt_de:["es tut uns leid"],alt_nl:["het spijt ons zeer"],ctx:"Es tut uns sehr leid, aber wir sind ausgebucht."},
+  {nl:"te mogen begroeten",de:"begrüßen zu dürfen",alt_de:[],alt_nl:[],ctx:"Wir freuen uns, Sie bald begrüßen zu dürfen."},
+  {nl:"met vriendelijke groet",de:"Mit freundlichen Grüßen",alt_de:["mfg"],alt_nl:["met vriendelijke groeten"],ctx:"Mit freundlichen Grüßen, Ihr Hotelteam"},
+  {nl:"de FO-manager",de:"der Empfangschef",alt_de:[],alt_nl:["de front office manager","de receptiemanager","fo-manager"],ctx:"Der Empfangschef begrüßt die Gäste persönlich."},
+  {nl:"in de bijlage",de:"in der Anlage",alt_de:[],alt_nl:["als bijlage"],ctx:"In der Anlage finden Sie unsere Preisliste."},
+  {nl:"geen",de:"keine",alt_de:["kein"],alt_nl:[],ctx:"Leider haben wir keine freien Zimmer mehr."},
+  {nl:"helaas",de:"leider",alt_de:[],alt_nl:["jammer genoeg"],ctx:"Leider müssen wir Ihre Reservierung stornieren."},
+  {nl:"laatste",de:"letzten",alt_de:["letzte","letzter","letztes"],alt_nl:["de laatste","het laatste"],ctx:"In den letzten Wochen hatten wir viele Gäste."},
+  {nl:"of",de:"ob",alt_de:[],alt_nl:[],ctx:"Könnten Sie uns mitteilen, ob Sie kommen?"},
+  {nl:"al",de:"schon",alt_de:[],alt_nl:["reeds"],ctx:"Haben Sie schon reserviert?"},
+  {nl:"over",de:"über",alt_de:[],alt_nl:[],ctx:"Wir informieren Sie über unsere Angebote."},
+  {nl:"van",de:"vom",alt_de:["von dem"],alt_nl:[],ctx:"Ihre E-Mail vom 10. Januar haben wir erhalten."},
+  {nl:"van tot en met",de:"vom bis zum",alt_de:["vom .. bis zum ..","vom... bis zum..."],alt_nl:["van .. tot en met ..","van... tot en met..."],ctx:"Vom 1. bis zum 7. August sind wir geöffnet."},
+  {nl:"verder",de:"weiter",alt_de:[],alt_nl:[],ctx:"Für weitere Informationen kontaktieren Sie uns."},
+  {nl:"hoe",de:"wie",alt_de:[],alt_nl:[],ctx:"Wie kann ich Ihnen helfen?"},
+  {nl:"dus",de:"also",alt_de:[],alt_nl:[],ctx:"Sie möchten also ein Doppelzimmer reservieren?"},
+  {nl:"het vertrek",de:"die Abreise",alt_de:[],alt_nl:["de afreis","vertrek"],ctx:"Die Abreise ist am Sonntag um 11 Uhr."},
+  {nl:"de aankomst",de:"die Anreise",alt_de:[],alt_nl:["aankomst"],ctx:"Die Anreise ist ab 14 Uhr möglich."},
+  {nl:"de bijlage",de:"die Anlage",alt_de:[],alt_nl:["bijlage"],ctx:"Die Anlage enthält unseren Hausprospekt."},
+  {nl:"het aanbod / de offerte",de:"das Angebot",alt_de:[],alt_nl:["het aanbod","de offerte","aanbod","offerte"],ctx:"Unser Angebot gilt bis Ende des Monats."},
+  {nl:"de annulering",de:"die Annullierung / die Stornierung",alt_de:[],alt_nl:["annulering","de stornering"],ctx:"Die Stornierung muss schriftlich erfolgen."},
+  {nl:"de annuleringskosten",de:"die Annullierungskosten / die Rücktrittskosten",alt_de:[],alt_nl:["annuleringskosten"],ctx:"Die Annullierungskosten betragen 50 Euro."},
+  {nl:"annuleren",de:"stornieren / annullieren",alt_de:[],alt_nl:[],ctx:"Möchten Sie die Reservierung stornieren?"},
+  {nl:"het bericht",de:"die Nachricht",alt_de:[],alt_nl:["bericht"],ctx:"Vielen Dank für Ihre Nachricht."},
+  {nl:"het verblijf",de:"der Aufenthalt",alt_de:[],alt_nl:["verblijf"],ctx:"Wir wünschen Ihnen einen angenehmen Aufenthalt."},
+  {nl:"volgeboekt",de:"ausgebucht",alt_de:[],alt_nl:["vol"],ctx:"Das Hotel ist leider ausgebucht."},
+  {nl:"voldoende",de:"ausreichend",alt_de:[],alt_nl:["genoeg"],ctx:"Wir haben ausreichend Parkplätze."},
+  {nl:"het spoedig antwoord",de:"die baldige Antwort",alt_de:[],alt_nl:["spoedig antwoord"],ctx:"Wir freuen uns auf Ihre baldige Antwort."},
+  {nl:"spoedig",de:"bald",alt_de:[],alt_nl:["snel","gauw"],ctx:"Wir hoffen, Sie bald bei uns begrüßen zu dürfen."},
+  {nl:"verzoeken",de:"bitten",alt_de:[],alt_nl:["vragen"],ctx:"Wir bitten Sie, das Formular auszufüllen."},
+  {nl:"nodig hebben",de:"brauchen",alt_de:[],alt_nl:[],ctx:"Brauchen Sie ein Kinderbett?"},
+  {nl:"gebruiken",de:"benutzen",alt_de:[],alt_nl:[],ctx:"Sie können das Schwimmbad kostenlos benutzen."},
+  {nl:"enthousiast",de:"begeistert",alt_de:[],alt_nl:[],ctx:"Die Gäste waren begeistert vom Service."},
+  {nl:"bevestigen",de:"bestätigen",alt_de:[],alt_nl:[],ctx:"Hiermit bestätigen wir Ihre Reservierung."},
+  {nl:"de prijs",de:"der Preis",alt_de:[],alt_nl:["prijs"],ctx:"Der Preis ist inklusive Frühstück."},
+  {nl:"de kamerprijs",de:"der Zimmerpreis",alt_de:[],alt_nl:["kamerprijs"],ctx:"Der Zimmerpreis beträgt 89 Euro pro Nacht."},
+  {nl:"de tweepersoonskamer",de:"das Doppelzimmer",alt_de:[],alt_nl:["tweepersoonskamer"],ctx:"Das Doppelzimmer hat ein großes Bett."},
+  {nl:"de driepersoonskamer",de:"das Dreibettzimmer",alt_de:[],alt_nl:["driepersoonskamer"],ctx:"Das Dreibettzimmer ist ideal für Familien."},
+  {nl:"de eenpersoonskamer",de:"das Einzelzimmer",alt_de:[],alt_nl:["eenpersoonskamer"],ctx:"Das Einzelzimmer kostet 69 Euro."},
+  {nl:"huis/hotel",de:"das Haus",alt_de:[],alt_nl:["huis","hotel","het huis","het hotel"],ctx:"Unser Haus liegt zentral in der Altstadt."},
+  {nl:"het aantal personen",de:"die Personenzahl",alt_de:[],alt_nl:["aantal personen"],ctx:"Bitte geben Sie die Personenzahl an."},
+  {nl:"per persoon per nacht",de:"pro Person pro Nacht",alt_de:[],alt_nl:["p.p.p.n.","pppn"],ctx:"Der Preis ist 45 Euro pro Person pro Nacht."},
+  {nl:"de reis",de:"die Reise",alt_de:[],alt_nl:["reis"],ctx:"Wir wünschen Ihnen eine gute Reise."},
+  {nl:"de volpension/halfpension",de:"die Voll-/Halbpension",alt_de:["die vollpension","die halbpension"],alt_nl:["volpension","halfpension","de volpension","de halfpension"],ctx:"Halbpension beinhaltet Frühstück und Abendessen."},
+  {nl:"bevindt zich op de derde verdieping",de:"befindet sich im 3. Stock",alt_de:["befindet sich im dritten stock"],alt_nl:["bevindt zich op de 3e verdieping","is op de derde verdieping","is op de 3e verdieping"],ctx:"Das Restaurant befindet sich im 3. Stock."},
+  {nl:"de verdieping/etage",de:"der Stock",alt_de:["die etage"],alt_nl:["verdieping","etage","de verdieping","de etage"],ctx:"Ihr Zimmer ist im zweiten Stock."},
+  {nl:"op de eerste verdieping",de:"im 1. Stock",alt_de:["im ersten stock"],alt_nl:["op de 1e verdieping"],ctx:"Der Fitnessraum ist im 1. Stock."},
+  {nl:"de kamer",de:"das Zimmer",alt_de:[],alt_nl:["kamer"],ctx:"Das Zimmer ist sehr geräumig."},
+  {nl:"beschikt over",de:"verfügt über",alt_de:[],alt_nl:["heeft"],ctx:"Das Hotel verfügt über einen Wellnessbereich."},
+  {nl:"ter beschikking",de:"zur Verfügung",alt_de:[],alt_nl:["beschikbaar"],ctx:"Ein Parkplatz steht zur Verfügung."},
+  {nl:"uitgerust met",de:"ausgestattet mit",alt_de:[],alt_nl:["voorzien van"],ctx:"Alle Zimmer sind ausgestattet mit Klimaanlage."},
+  {nl:"de televisie",de:"der Fernseher",alt_de:[],alt_nl:["televisie","de tv","tv"],ctx:"Der Fernseher hat internationale Kanäle."},
+  {nl:"het ontbijt",de:"das Frühstück",alt_de:[],alt_nl:["ontbijt"],ctx:"Das Frühstück wird ab 7 Uhr serviert."},
+  {nl:"het kinderbed",de:"das Kinderbett",alt_de:[],alt_nl:["kinderbed"],ctx:"Ein Kinderbett können wir gerne bereitstellen."},
+  {nl:"de airco",de:"die Klimaanlage",alt_de:[],alt_nl:["airco","de airconditioning"],ctx:"Die Klimaanlage funktioniert einwandfrei."},
+  {nl:"de ligging",de:"die Lage",alt_de:[],alt_nl:["ligging","de locatie"],ctx:"Die Lage des Hotels ist perfekt."},
+  {nl:"het balkon",de:"der Balkon",alt_de:[],alt_nl:["balkon"],ctx:"Das Zimmer hat einen schönen Balkon."},
+  {nl:"het bad",de:"das Bad",alt_de:[],alt_nl:["bad","de badkamer"],ctx:"Das Bad ist modern eingerichtet."},
+  {nl:"de douche",de:"die Dusche",alt_de:[],alt_nl:["douche"],ctx:"Die Dusche hat einen Regenkopf."},
+  {nl:"de lift",de:"der Aufzug",alt_de:[],alt_nl:["lift"],ctx:"Der Aufzug befindet sich am Ende des Flurs."},
+  {nl:"de parkeermogelijkheden",de:"die Parkmöglichkeiten",alt_de:[],alt_nl:["parkeermogelijkheden"],ctx:"Fragen Sie nach den Parkmöglichkeiten."},
+  {nl:"het zwembad",de:"das Schwimmbad",alt_de:[],alt_nl:["zwembad"],ctx:"Das Schwimmbad ist beheizt."},
+  {nl:"de prijslijst",de:"die Preisliste",alt_de:[],alt_nl:["prijslijst"],ctx:"Die Preisliste finden Sie in der Anlage."},
+  {nl:"de hotelprospectus",de:"der Hausprospekt",alt_de:[],alt_nl:["hotelprospectus","de brochure"],ctx:"Im Hausprospekt finden Sie alle Informationen."},
+  {nl:"de toilet",de:"die Toilette",alt_de:[],alt_nl:["toilet","het toilet","de wc","wc"],ctx:"Die Toilette ist separat."},
+  {nl:"het uitzicht",de:"die Aussicht",alt_de:[],alt_nl:["uitzicht"],ctx:"Die Aussicht vom Balkon ist wunderschön."},
+  {nl:"met mooi uitzicht op",de:"mit schönem Blick auf",alt_de:[],alt_nl:["met een mooi uitzicht op"],ctx:"Das Zimmer hat einen schönen Blick auf die Berge."},
+  {nl:"de oude binnenstad",de:"die Altstadt",alt_de:[],alt_nl:["oude binnenstad"],ctx:"Die Altstadt ist zu Fuß erreichbar."},
+  {nl:"de logies",de:"die Unterkunft",alt_de:[],alt_nl:["logies","de accommodatie"],ctx:"Die Unterkunft ist gemütlich eingerichtet."},
+  {nl:"in de buurt",de:"in der Nähe",alt_de:[],alt_nl:["dichtbij"],ctx:"In der Nähe gibt es viele Restaurants."},
+  {nl:"inclusief",de:"inklusive",alt_de:["inklusiv"],alt_nl:["inbegrepen"],ctx:"Der Preis ist inklusive Frühstück."},
+  {nl:"de kosten",de:"die Kosten",alt_de:[],alt_nl:["kosten"],ctx:"Die Kosten werden am Ende berechnet."},
+  {nl:"de toeristenbelasting",de:"die Kurtaxe",alt_de:[],alt_nl:["toeristenbelasting"],ctx:"Die Kurtaxe beträgt 2,50 Euro pro Person."},
+  {nl:"de BTW",de:"die Mehrwertsteuer",alt_de:["die mwst","mwst"],alt_nl:["btw"],ctx:"Die Mehrwertsteuer ist im Preis enthalten."},
+  {nl:"reserveren",de:"reservieren",alt_de:[],alt_nl:[],ctx:"Möchten Sie ein Zimmer reservieren?"},
+  {nl:"gereserveerd",de:"reserviert",alt_de:[],alt_nl:[],ctx:"Das Zimmer ist bereits reserviert."},
+  {nl:"de reservering",de:"die Reservierung",alt_de:[],alt_nl:["reservering"],ctx:"Die Reservierung wurde bestätigt."},
+  {nl:"de reserveringsbevestiging",de:"die Reservierungsbestätigung",alt_de:[],alt_nl:["reserveringsbevestiging"],ctx:"Die Reservierungsbestätigung senden wir per E-Mail."},
+  {nl:"het hoofd reserveringen",de:"der Reservierungsleiter",alt_de:[],alt_nl:["de reserveringsmanager"],ctx:"Der Reservierungsleiter hilft Ihnen gerne."},
+  {nl:"vanzelfsprekend",de:"selbstverständlich",alt_de:[],alt_nl:["natuurlijk","uiteraard"],ctx:"Selbstverständlich helfen wir Ihnen gerne."},
+  {nl:"zich verheugen",de:"sich freuen",alt_de:[],alt_nl:["verheugen"],ctx:"Wir freuen uns auf Ihren Besuch."},
+  {nl:"wij verheugen ons op",de:"wir freuen uns auf",alt_de:[],alt_nl:["we verheugen ons op"],ctx:"Wir freuen uns auf Ihre Antwort."},
+  {nl:"hopelijk",de:"hoffentlich",alt_de:[],alt_nl:[],ctx:"Hoffentlich können wir Ihnen helfen."},
+  {nl:"de badkuip",de:"die Badewanne",alt_de:[],alt_nl:["badkuip"],ctx:"Das Badezimmer hat eine große Badewanne."},
+  {nl:"in ons hotel",de:"in unserem Hotel",alt_de:[],alt_nl:[],ctx:"In unserem Hotel fühlen Sie sich wie zu Hause."}
+];
+
+const LEVEL_TITLES = ["Receptie Rookie","Bagagedrager","Portier in Training","Kamermeisje/jongen","Reserverings Rebel","Front Office Fighter","Concierge Kampioen","Guest Relations Guru","Hotelmanager","Gastvrij Genie","Duits Diplomaat","WÖRTER WARRIOR ELITE"];
+const TH = [0,50,120,220,350,520,730,980,1280,1630,2030,2500];
+const PRAISE = ["BOOM! 💥 Perfect!","Ja! Helemaal goed! 🎯","On fire! 🔥","Ausgezeichnet!","Genau richtig! 👏","Top! ✨","Weiter so! 💪","Sehr gut!","Wunderbar!"];
+const MODE_NAME = {typed:'Typen', mc:'Meerkeuze', cloze:'Zinnen'};
+const GENDER = {der:'mannelijk', die:'vrouwelijk', das:'onzijdig'};
+
+/* ═════════ HELPERS ═════════ */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rand = a => a[Math.floor(Math.random()*a.length)];
+const uniq = a => [...new Set(a)];
+function shuffle(a){ const b=[...a]; for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; }
+
+function norm(s){
+  return String(s).toLowerCase().replace(/…/g,' ').replace(/[()]/g,' ')
+    .replace(/[.,!?;:"“”„]/g,' ').replace(/\s+/g,' ').trim();
+}
+/* fold umlauts and their ae/oe/ue spellings onto one form, so we can detect "almost" */
+const deep = s => s.replace(/ä|ae/g,'a').replace(/ö|oe/g,'o').replace(/ü|ue/g,'u').replace(/ß/g,'ss');
+const ART_RE = /^(der|die|das|de|het)\s+/;
+const stripArt = s => s.replace(ART_RE,'');
+const artOf = s => (s.match(ART_RE)||[])[1] || '';
+function lev(a,b){
+  const m=a.length,n=b.length; if(!m) return n; if(!n) return m;
+  let prev=Array.from({length:n+1},(_,j)=>j);
+  for(let i=1;i<=m;i++){ const cur=[i]; for(let j=1;j<=n;j++){ cur[j]= a[i-1]===b[j-1]? prev[j-1] : 1+Math.min(prev[j-1],prev[j],cur[j-1]); } prev=cur; }
+  return prev[n];
+}
+/* colour der/die/das only where it is the citation article (start of entry or after " / ") */
+function fmtDe(s){
+  return esc(s).replace(/(^|\/\s)(der|die|das)(?=\s)/gi, (m,p,a)=>`${p}<span class="art art-${a.toLowerCase()}">${a}</span>`);
+}
+const isNoun = w => /^(der|die|das)\s/i.test(w.de);
+
+/* ═════════ VOCAB PREP ═════════ */
+const VOCAB = RAW.map(w => ({...w, key:w.de}));
+VOCAB.forEach(w => {
+  // drop alternates that are only an umlaut-less spelling: those now score "bijna" with a tip instead of full marks
+  const prims = uniq([w.de, ...w.de.split(/\s+\/\s+/)]).map(norm);
+  w.alt_de = w.alt_de.filter(a => { const an=norm(a); return !prims.some(p => p!==an && deep(p)===deep(an)); });
+  w.cloze = buildCloze(w);
+});
+function buildCloze(w){
+  let core = w.de.split(/\s+\/\s+/)[0].replace(/…/g,'').replace(/\(.*?\)/g,'').replace(/[,.\s]+$/,'').trim();
+  core = core.replace(/^(der|die|das)\s+/i,'');
+  if(!core) return null;
+  const re = new RegExp('(^|[^\\p{L}])(' + core.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')(?![\\p{L}])','iu');
+  const m = re.exec(w.ctx); if(!m) return null;
+  const start = m.index + m[1].length, word = m[2];
+  return {before:w.ctx.slice(0,start), word, after:w.ctx.slice(start+word.length), start};
+}
+const CLOZE_POOL = VOCAB.filter(w => w.cloze);
+const ART_POOL = VOCAB.map(w => {
+  const first = w.de.split(/\s+\/\s+/)[0];
+  const m = first.match(/^(der|die|das)\s+(.+)$/);
+  return (m && /^[A-ZÄÖÜ]/.test(m[2])) ? {w, art:m[1], noun:m[2]} : null;
+}).filter(Boolean);
+
+/* ═════════ OPSLAG ═════════ */
+const STORE_KEY = 'ww2-progress';
+const P = (() => {
+  let d=null; try{ d=JSON.parse(localStorage.getItem(STORE_KEY)); }catch(e){}
+  return Object.assign({xp:0, boxes:{}, seen:{}, day:0, lastDay:'', bestSprint:0, dir:'nl-de', len:'10'}, d||{});
+})();
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(P)); }catch(e){} }
+const dstr = d => d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+function yesterday(){ const d=new Date(); d.setDate(d.getDate()-1); return dstr(d); }
+function touchDay(){
+  const t=dstr(new Date()); if(P.lastDay===t) return;
+  P.day = P.lastDay===yesterday() ? P.day+1 : 1; P.lastDay=t; save(); renderHeader();
+}
+const dayStreak = () => (P.lastDay===dstr(new Date()) || P.lastDay===yesterday()) ? P.day : 0;
+
+const box = w => P.boxes[w.key] || 0;
+const status = w => !P.seen[w.key] ? 'new' : box(w)>=4 ? 'mast' : 'learn';
+function grade(w, v){ // v: ok | meh | bad | soft
+  P.seen[w.key]=1; const b=box(w);
+  P.boxes[w.key] = v==='ok' ? Math.min(5,b+1) : v==='bad' ? Math.max(0,b-2) : v==='soft' ? Math.max(0,b-1) : b;
+  save();
+}
+/* weighted sample without replacement — weaker words come up more often */
+function pickWeighted(pool, n){
+  const W=[8,5,3,2,1,.6];
+  return pool.map(w => ({w, k:Math.pow(Math.random(), 1/(W[box(w)]*(P.seen[w.key]?1:1.3)))}))
+             .sort((a,b)=>b.k-a.k).slice(0,n).map(x=>x.w);
+}
+const sessionLen = pool => P.len==='all' ? pool.length : Math.min(+P.len, pool.length);
+const weakWords = () => VOCAB.filter(w => P.seen[w.key] && box(w)<=1).sort((a,b)=>box(a)-box(b));
+
+/* ═════════ XP & LEVELS ═════════ */
+function levelOf(x){ if(x>=2500) return 12+Math.floor((x-2500)/600); for(let i=TH.length-1;i>=0;i--) if(x>=TH[i]) return i+1; return 1; }
+const lvlStart = lv => lv<=12 ? TH[lv-1] : 2500+(lv-12)*600;
+const lvlEnd = lv => lv<12 ? TH[lv] : 2500+(lv-11)*600;
+const titleOf = lv => LEVEL_TITLES[Math.min(lv-1, LEVEL_TITLES.length-1)];
+function addXP(n){
+  if(!n) return; const old=levelOf(P.xp); P.xp+=n; save(); renderHeader();
+  const lv=levelOf(P.xp); if(lv>old) setTimeout(()=>showLevelUp(lv), 450);
+}
+function popXP(n, meh){
+  const p=$('xp-pop'); p.textContent=`+${n} XP`; p.className='xp-pop'+(meh?' meh':'');
+  void p.offsetWidth; p.classList.add('go');
+}
+function showLevelUp(lv){
+  $('ov-n').textContent=lv; $('ov-title').textContent=titleOf(lv);
+  $('lvl-ov').hidden=false; $('ov-close').focus();
+}
+$('ov-close').onclick = () => { $('lvl-ov').hidden=true; const n=$('p-next'); if(current==='play' && S && S.answered) n.focus(); };
+
+function renderHeader(){
+  const lv=levelOf(P.xp);
+  $('h-xp').textContent=P.xp; $('h-day').textContent=dayStreak(); $('h-lvl').textContent='Lv '+lv;
+  $('h-lvlbar').style.width = Math.min(100,(P.xp-lvlStart(lv))/(lvlEnd(lv)-lvlStart(lv))*100)+'%';
+}
+
+/* ═════════ UITSPRAAK ═════════ */
+const TTS = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+let deVoice=null;
+function pickVoice(){ const vs=speechSynthesis.getVoices(); deVoice = vs.find(v=>/^de[-_]DE/i.test(v.lang)) || vs.find(v=>/^de/i.test(v.lang)) || null; }
+if(TTS){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function say(t){
+  if(!TTS) return; speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(t.replace(/…/g,'').replace(/\(.*?\)/g,'').replace(/\s\/\s/g,', ').replace(/\//g,' '));
+  u.lang='de-DE'; if(deVoice) u.voice=deVoice; u.rate=.9; speechSynthesis.speak(u);
+}
+const speakBtn = (t, sm) => TTS ? `<button class="speak${sm?' sm':''}" data-say="${esc(t)}" aria-label="Spreek uit" title="Spreek uit">🔊</button>` : '';
+document.addEventListener('click', e => { const b=e.target.closest('[data-say]'); if(b){ e.preventDefault(); say(b.dataset.say); } });
+
+/* ═════════ NAVIGATIE ═════════ */
+let current='home';
+function show(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  $('scr-'+name).classList.add('on'); current=name; window.scrollTo(0,0);
+}
+function goHome(){
+  if(SP.running) stopSprint(true);
+  renderHome(); show('home');
+}
+$('logo').onclick = goHome;
+$('logo').onkeydown = e => { if(e.key==='Enter'||e.key===' '){ e.preventDefault(); goHome(); } };
+
+/* ═════════ HOME ═════════ */
+function renderHome(){
+  const n=VOCAB.length, m=VOCAB.filter(w=>status(w)==='mast').length, l=VOCAB.filter(w=>status(w)==='learn').length;
+  $('n-words').textContent=n;
+  $('m-pct').textContent=Math.round(m/n*100)+'%';
+  $('m-mm').style.width=(m/n*100)+'%'; $('m-ml').style.width=(l/n*100)+'%';
+  $('m-n-m').textContent=m; $('m-n-l').textContent=l; $('m-n-n').textContent=n-m-l;
+  const lv=levelOf(P.xp);
+  $('rank').textContent=`Level ${lv} · ${titleOf(lv)} · nog ${lvlEnd(lv)-P.xp} XP`;
+  document.querySelectorAll('#seg-dir button').forEach(b=>b.classList.toggle('on', b.dataset.v===P.dir));
+  document.querySelectorAll('#seg-len button').forEach(b=>b.classList.toggle('on', b.dataset.v===String(P.len)));
+  const weak=weakWords();
+  $('weak-btn').hidden = !weak.length;
+  $('weak-sub').textContent = `${weak.length} woord${weak.length===1?'':'en'} die je nog vaak fout hebt`;
+  $('best-sprint').textContent = P.bestSprint ? `Record: ${P.bestSprint}` : '';
+  renderHeader();
+}
+document.querySelectorAll('#seg-dir button').forEach(b=>b.onclick=()=>{ P.dir=b.dataset.v; save(); renderHome(); });
+document.querySelectorAll('#seg-len button').forEach(b=>b.onclick=()=>{ P.len=b.dataset.v; save(); renderHome(); });
+document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>{
+  const m=b.dataset.mode;
+  if(m==='flash') startFlash(); else if(m==='sprint') openSprint(); else if(m==='list') openList(); else startSession(m);
+});
+$('weak-btn').onclick = () => startSession('typed', {words: weakWords().slice(0, sessionLen(VOCAB))});
+let resetArmed=0;
+$('reset-btn').onclick = () => {
+  const b=$('reset-btn');
+  if(Date.now()-resetArmed < 4000){
+    const keep={dir:P.dir,len:P.len};
+    Object.keys(P).forEach(k=>delete P[k]);
+    Object.assign(P,{xp:0,boxes:{},seen:{},day:0,lastDay:'',bestSprint:0},keep); save();
+    b.textContent='Voortgang gewist'; resetArmed=0; renderHome();
+    setTimeout(()=>b.textContent='Voortgang wissen',2500);
+  } else {
+    resetArmed=Date.now(); b.textContent='Zeker weten? Tik nog een keer om alles te wissen';
+    setTimeout(()=>{ if(Date.now()-resetArmed>=4000) b.textContent='Voortgang wissen'; },4100);
+  }
+};
+
+/* ═════════ ANTWOORD-CONTROLE ═════════ */
+function umlMsg(t){
+  if(/ß/.test(t)) return 'Schrijf de <b>ß</b> (Eszett).';
+  if(/[äöü]/i.test(t)) return 'Vergeet de <b>Umlaut</b> niet (ä, ö, ü).';
+  return 'Let op de spelling.';
+}
+function artSpan(a){ return /^(der|die|das)$/.test(a) ? `<span class="art art-${a}">${a}</span>` : `<b>${a}</b>`; }
+function capIssue(user, parts){
+  const ut = user.replace(/[…,.()!?]/g,' ').split(/\s+/).filter(Boolean);
+  for(const p of parts){
+    const toks = p.replace(/[…,.()!?]/g,' ').split(/\s+/).filter(Boolean);
+    for(let i=0;i<toks.length;i++){
+      const tk=toks[i];
+      if(tk.length<2 || !/^[A-ZÄÖÜ]/.test(tk) || (i===0 && toks.length>1)) continue;
+      if(ut.some(x => x.toLowerCase()===tk.toLowerCase() && x[0]===x[0].toLowerCase())) return tk;
+    }
+  }
+  return null;
+}
+function checkTyped(user, w, dir){
+  const prim = dir==='nl-de' ? w.de : w.nl;
+  const parts = uniq([prim, ...prim.split(/\s+\/\s+/)]);
+  const all = uniq([...parts, ...(dir==='nl-de' ? w.alt_de : w.alt_nl)]);
+  const u = norm(user);
+  if(all.some(t => norm(t)===u)){
+    if(dir==='nl-de'){
+      const cap = capIssue(user, parts);
+      if(cap) return {t:'meh', kind:'cap', d:`Hoofdletter! Duitse zelfstandige naamwoorden krijgen altijd een hoofdletter: <b>${esc(cap)}</b>.`};
+    }
+    return {t:'ok'};
+  }
+  for(const t of all){
+    const tn=norm(t), uc=stripArt(u), tc=stripArt(tn);
+    if(deep(uc)===deep(tc)){
+      const ua=artOf(u), ta=artOf(tn), msgs=[]; let kind='';
+      if(ua!==ta){
+        kind='art';
+        if(ta && !ua) msgs.push(`Vergeet het lidwoord niet: ${artSpan(ta)}${GENDER[ta]?` (${GENDER[ta]})`:''}.`);
+        else if(ta) msgs.push(`Lidwoord: het is ${artSpan(ta)}${GENDER[ta]?` (${GENDER[ta]})`:''}, niet ${esc(ua)}.`);
+        else msgs.push('Hier hoort geen lidwoord bij.');
+      }
+      if(uc!==tc){ kind=kind||'uml'; msgs.push(umlMsg(tc)); }
+      return {t:'meh', kind, d:msgs.join(' ')};
+    }
+  }
+  const uc=deep(stripArt(u));
+  for(const t of all){
+    const tc=deep(stripArt(norm(t))), L=tc.length;
+    if(L>=4 && lev(uc,tc) <= (L>=9?2:1)) return {t:'meh', kind:'typo', d:'Bijna! Er zit een kleine spelfout in.'};
+  }
+  return {t:'bad'};
+}
+function checkCloze(user, w){
+  const target=w.cloze.word, u=user.replace(/\s+/g,' ').trim().replace(/[.,!?]+$/,'');
+  const relax = s => w.cloze.start===0 ? s.charAt(0).toLowerCase()+s.slice(1) : s;
+  if(relax(u)===relax(target)) return {t:'ok'};
+  const ul=u.toLowerCase(), tl=target.toLowerCase();
+  if(ul===tl) return {t:'meh', kind:'cap', d:'Let op de hoofdletters! Duitse zelfstandige naamwoorden krijgen altijd een hoofdletter.'};
+  if(deep(ul)===deep(tl)) return {t:'meh', kind:'uml', d:umlMsg(tl)};
+  if(tl.length>=4 && lev(deep(ul),deep(tl)) <= (tl.length>=9?2:1)) return {t:'meh', kind:'typo', d:'Bijna! Er zit een kleine spelfout in.'};
+  return {t:'bad'};
+}
+
+/* ═════════ SESSIE: typen · meerkeuze · zinnen ═════════ */
+let S=null;
+function startSession(mode, opts={}){
+  touchDay();
+  let pool = mode==='cloze' ? CLOZE_POOL : VOCAB;
+  let words = opts.words ? shuffle(opts.words.filter(w => mode!=='cloze' || w.cloze)) : pickWeighted(pool, sessionLen(pool));
+  if(!words.length){ words = pickWeighted(pool, sessionLen(pool)); }
+  S = {mode, queue: words.map(w => ({w, dir: mode==='cloze' ? 'cloze' : P.dir==='mix' ? (Math.random()<.5?'nl-de':'de-nl') : P.dir})),
+       idx:0, xp:0, streak:0, best:0, log:[], retried:new Set(), answered:false, lock:0};
+  show('play'); renderQ();
+}
+function renderQ(){
+  const item=S.queue[S.idx], {w,dir}=item; S.cur=item; S.answered=false;
+  $('p-bar').style.width=(S.idx/S.queue.length*100)+'%';
+  $('p-count').textContent=`${S.idx+1}/${S.queue.length}`;
+  $('p-streak').textContent='🎯 '+S.streak;
+  $('p-fb').className='fb'; $('p-card').className='qcard';
+  const isMC = S.mode==='mc';
+  $('typed-area').hidden=isMC; $('mc-area').hidden=!isMC;
+  const badge=$('p-badge'), prompt=$('p-prompt'), hint=$('p-hint'), inp=$('p-input');
+  if(dir==='cloze'){
+    badge.className='badge cloze'; badge.textContent='🧩 VUL DE ZIN AAN';
+    prompt.className='prompt sentence';
+    prompt.innerHTML = esc(w.cloze.before)+'<span class="blank">?</span>'+esc(w.cloze.after);
+    hint.innerHTML = `In het Nederlands: <b>${esc(w.nl)}</b>`;
+    inp.placeholder='Typ het ontbrekende Duitse woord…';
+  } else if(dir==='nl-de'){
+    badge.className='badge nlde'; badge.innerHTML='🇳🇱 NEDERLANDS ➜ 🇩🇪 DUITS';
+    prompt.className='prompt'; prompt.innerHTML=`<span>${esc(w.nl)}</span>`;
+    hint.textContent = isMC ? 'Kies de juiste Duitse vertaling' : isNoun(w) ? 'Met lidwoord (der/die/das) en hoofdletter' : 'Typ de Duitse vertaling';
+    inp.placeholder='Typ het Duitse woord…';
+  } else {
+    badge.className='badge denl'; badge.innerHTML='🇩🇪 DUITS ➜ 🇳🇱 NEDERLANDS';
+    prompt.className='prompt'; prompt.innerHTML=`<span>${fmtDe(w.de)}</span>${speakBtn(w.de)}`;
+    hint.textContent = isMC ? 'Kies de juiste Nederlandse vertaling' : 'Typ de Nederlandse vertaling';
+    inp.placeholder='Typ het Nederlandse woord…';
+  }
+  if(isMC) renderOptions(item);
+  else {
+    inp.value=''; inp.disabled=false; $('p-check').disabled=false; $('p-skip').disabled=false;
+    document.querySelectorAll('#p-keys .key').forEach(k=>k.disabled=false);
+    $('p-keys').hidden = dir==='de-nl';
+    inp.focus({preventScroll:true});
+  }
+}
+function buildOptions(w, dir){
+  const field = dir==='nl-de' ? 'de' : 'nl', correct=w[field];
+  const noun = /^(der|die|das|de|het)\s/i.test(correct);
+  const out=[correct], taken=new Set([norm(correct)]);
+  let fake=null;
+  if(dir==='nl-de' && isNoun(w) && !correct.includes(' / ') && Math.random()<.6){
+    const m=correct.match(/^(der|die|das)\s+(.*)$/i);
+    fake = rand(['der','die','das'].filter(a=>a!==m[1].toLowerCase()))+' '+m[2];
+    out.push(fake); taken.add(norm(fake));
+  }
+  const cands = shuffle(VOCAB.filter(v=>v!==w)).map(v=>v[field]);
+  const same = cands.filter(c => /^(der|die|das|de|het)\s/i.test(c)===noun);
+  for(const c of [...same, ...cands]){ if(out.length>=4) break; if(!taken.has(norm(c))){ out.push(c); taken.add(norm(c)); } }
+  return {opts:shuffle(out), correct, fake};
+}
+function renderOptions(item){
+  const o=buildOptions(item.w, item.dir); S.mc=o;
+  $('mc-area').innerHTML = o.opts.map((x,i)=>`<button class="opt" data-i="${i}"><kbd>${i+1}</kbd><span>${item.dir==='nl-de'?fmtDe(x):esc(x)}</span></button>`).join('');
+  $('mc-area').querySelectorAll('.opt').forEach(b=>b.onclick=()=>pickMC(+b.dataset.i));
+}
+function pickMC(i){
+  if(!S || S.answered || S.mode!=='mc') return;
+  const chosen=S.mc.opts[i]; if(chosen===undefined) return;
+  const ok = chosen===S.mc.correct;
+  $('mc-area').querySelectorAll('.opt').forEach((b,j)=>{
+    b.disabled=true; const v=S.mc.opts[j];
+    b.classList.add(v===S.mc.correct ? 'ok' : j===i ? 'bad' : 'dim');
+  });
+  let res = ok ? {t:'ok'} : {t:'bad'};
+  if(!ok && chosen===S.mc.fake){ const a=artOf(norm(S.mc.correct)); res={t:'bad', kind:'art', d:`Lidwoord-valstrik! Het is ${artSpan(a)} (${GENDER[a]}).`}; }
+  finish(res, chosen);
+}
+function submitTyped(skip){
+  if(!S || S.answered) return;
+  const inp=$('p-input'), user = skip ? '' : inp.value.trim();
+  if(!skip && !user){ inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake'); inp.focus(); return; }
+  const {w,dir}=S.cur;
+  const res = skip ? {t:'bad', skipped:true} : dir==='cloze' ? checkCloze(user,w) : checkTyped(user,w,dir);
+  finish(res, user);
+}
+function xpFor(t){
+  if(t==='meh') return 5;
+  if(t!=='ok') return 0;
+  return S.mode==='mc' ? 6+Math.min(S.streak,10) : 10+Math.min(S.streak*2,20);
+}
+function finish(res, user){
+  S.answered=true; S.lock=performance.now()+300;
+  const {w,dir}=S.cur;
+  $('p-input').disabled=true; $('p-check').disabled=true; $('p-skip').disabled=true;
+  document.querySelectorAll('#p-keys .key').forEach(k=>k.disabled=true);
+  S.undo={box:box(w), streak:S.streak, seen:!!P.seen[w.key], retryAt:-1};
+  if(res.t==='ok'){ S.streak++; S.best=Math.max(S.best,S.streak); } else S.streak=0;
+  const gained = xpFor(res.t); S.undo.xp=gained;
+  grade(w, res.t);
+  S.xp+=gained; if(gained){ addXP(gained); popXP(gained, res.t==='meh'); }
+  S.log.push({w, dir, user, t:res.t, kind:res.kind||''});
+  const rk=w.key+dir;
+  if(res.t==='bad' && !S.retried.has(rk)){
+    const at=Math.min(S.queue.length, S.idx+1+3); S.queue.splice(at,0,{w,dir}); S.retried.add(rk); S.undo.retryAt=at;
+  }
+  $('p-card').className='qcard '+(res.t==='ok'?'hit-ok':res.t==='bad'?'hit-bad':'');
+  $('p-count').textContent=`${S.idx+1}/${S.queue.length}`;
+  $('p-streak').textContent='🎯 '+S.streak;
+  renderFeedback(res, user, gained);
+}
+function ctxHtml(w){
+  const sent = w.cloze ? esc(w.cloze.before)+'<mark>'+esc(w.cloze.word)+'</mark>'+esc(w.cloze.after) : esc(w.ctx);
+  return `<div class="ctx"><span>📝 ${sent}</span>${speakBtn(w.ctx,1)}</div>`;
+}
+function renderFeedback(res, user, gained){
+  const {w,dir}=S.cur, fb=$('p-fb');
+  const corr = dir==='cloze' ? esc(w.cloze.word) : dir==='nl-de' ? fmtDe(w.de) : esc(w.nl);
+  let h, body='';
+  if(res.t==='ok'){
+    fb.className='fb on ok'; h='✅ '+rand(PRAISE);
+    body += `<div class="fb-row">${S.streak>=3?`<span style="color:var(--gold);font-weight:900">🔥 ${S.streak}× streak! +${gained} XP</span>`:`<span>+${gained} XP</span>`}</div>`;
+    body += `<div class="fb-row"><span>${esc(w.nl)} = ${fmtDe(w.de)}</span>${speakBtn(w.de,1)}</div>`;
+  } else {
+    fb.className='fb on '+(res.t==='meh'?'meh':'bad');
+    h = res.t==='meh' ? '🔶 Bijna goed! +5 XP' : res.skipped ? '⏭️ Geen probleem, onthoud deze:' : '❌ Helaas!';
+    if(user) body += `<div class="fb-row"><span class="k">Jouw antwoord</span><s>${dir==='nl-de'?fmtDe(user):esc(user)}</s></div>`;
+    body += `<div class="fb-row"><span class="k">Correct</span><span class="good">${corr}</span>${dir!=='de-nl'?speakBtn(dir==='cloze'?w.cloze.word:w.de,1):''}</div>`;
+    if(res.d) body += `<div class="tip">💡 ${res.d}</div>`;
+    if(res.t==='bad' && S.undo.retryAt>=0) body += `<div class="fb-row" style="color:var(--muted);font-size:.85rem">Dit woord komt zo nog een keer terug.</div>`;
+  }
+  if(res.t!=='ok' || dir!=='cloze') body += ctxHtml(w);
+  $('fb-h').textContent=h; $('fb-body').innerHTML=body;
+  $('p-override').hidden = !(res.t!=='ok' && user && S.mode!=='mc');
+  setTimeout(()=>{ if(S && S.answered && $('lvl-ov').hidden) $('p-next').focus({preventScroll:true}); }, 30);
+  fb.scrollIntoView({block:'nearest', behavior:'smooth'});
+}
+/* manual override: the student's answer was a valid variant the list doesn't know */
+$('p-override').onclick = () => {
+  if(!S || !S.answered) return;
+  const {w}=S.cur, u=S.undo, last=S.log[S.log.length-1];
+  if(!last || last.t==='ok') return;
+  P.boxes[w.key]=Math.min(5,u.box+1); save();
+  if(u.retryAt>=0){ S.queue.splice(u.retryAt,1); S.retried.delete(w.key+S.cur.dir); u.retryAt=-1; }
+  S.streak=u.streak+1; S.best=Math.max(S.best,S.streak);
+  const full = S.mode==='mc' ? 6 : 10+Math.min(S.streak*2,20), extra=Math.max(0, full-u.xp);
+  S.xp+=extra; addXP(extra); if(extra) popXP(extra);
+  last.t='ok'; last.kind='';
+  $('p-fb').className='fb on ok'; $('fb-h').textContent='✅ Oké, telt als goed!';
+  $('fb-body').innerHTML = `<div class="fb-row"><span>+${extra} XP · ${esc(w.nl)} = ${fmtDe(w.de)}</span></div>` + ctxHtml(w);
+  $('p-override').hidden=true; $('p-card').className='qcard hit-ok';
+  $('p-count').textContent=`${S.idx+1}/${S.queue.length}`; $('p-streak').textContent='🎯 '+S.streak;
+  $('p-next').focus();
+};
+function next(){
+  if(!S || !S.answered || performance.now()<S.lock) return;
+  S.idx++; if(S.idx>=S.queue.length) endSession(); else renderQ();
+}
+$('p-next').onclick=next;
+$('p-check').onclick=()=>submitTyped(false);
+$('p-skip').onclick=()=>submitTyped(true);
+$('p-stop').onclick=()=>endSession();
+$('p-input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); S.answered ? next() : submitTyped(false); } });
+document.querySelectorAll('#p-keys .key').forEach(k=>{
+  k.addEventListener('mousedown', e=>e.preventDefault()); // keep focus + caret in the input
+  k.onclick=()=>{
+    const inp=$('p-input'); if(inp.disabled) return;
+    const s=inp.selectionStart ?? inp.value.length, e2=inp.selectionEnd ?? s;
+    inp.value=inp.value.slice(0,s)+k.dataset.k+inp.value.slice(e2);
+    inp.focus(); inp.setSelectionRange(s+1,s+1);
+  };
+});
+
+function endSession(){
+  if(!S) return goHome();
+  const log=S.log; if(!log.length){ S=null; return goHome(); }
+  const c=log.filter(l=>l.t==='ok').length, m=log.filter(l=>l.t==='meh').length, b=log.filter(l=>l.t==='bad').length;
+  const acc=Math.round((c+m*.5)/log.length*100);
+  // a word counts as a mistake if its last attempt this session wasn't perfect
+  const lastBy=new Map(); log.forEach(l=>lastBy.set(l.w.key+l.dir,l));
+  const firstMiss=new Map(); log.forEach(l=>{ if(l.t!=='ok' && !firstMiss.has(l.w.key)) firstMiss.set(l.w.key,l); });
+  const toPractice=[...firstMiss.values()];
+  const rows = toPractice.map(l=>{
+    const fixed = lastBy.get(l.w.key+l.dir).t==='ok';
+    return `${esc(l.w.nl)} = ${fmtDe(l.w.de)}${l.user?`<small>Jij: ${esc(l.user)}${fixed?' · later wel goed ✓':''}</small>`:''}`;
+  });
+  const kinds=log.map(l=>l.kind), tips=[];
+  if(kinds.includes('art')) tips.push('Lidwoorden kosten je punten. Speel een <b>Lidwoord-sprint</b> om der/die/das te stampen.');
+  if(kinds.includes('uml')) tips.push('Umlaut vergeten? Gebruik de knoppen <b>ä ö ü ß</b> onder het invoerveld.');
+  if(kinds.includes('cap')) tips.push('In het Duits krijgt elk zelfstandig naamwoord een <b>hoofdletter</b>: die Reservierung, das Zimmer.');
+  if(b>c) tips.push('Veel nieuwe woorden? Begin met <b>Flashcards</b> of <b>Meerkeuze</b> en ga daarna typen.');
+  if(S.best>=5) tips.push(`Mooie streak van ${S.best}! 🔥`);
+  if(!tips.length) tips.push('15 minuten per dag werkt beter dan 2 uur per week. Kom morgen terug voor je 🔥-reeks!');
+  const mode=S.mode, practiceWords=toPractice.map(l=>l.w);
+  renderResults({
+    title: acc>=90?'MEISTERHAFT!':acc>=70?'STARK!':acc>=50?'GUT GEMACHT!':'WEITER ÜBEN!',
+    sub: `${MODE_NAME[mode]} · ${log.length} antwoorden · score ${acc}%`,
+    tiles: [[c,'Perfect','green'],[m,'Bijna','orange'],[b,'Fout','red'],[S.xp,'XP','gold']],
+    extra: S.best>=3 ? `🔥 Beste streak: ${S.best}` : '',
+    lists: [{title:'🎯 Nog oefenen', cls:'bad', rows}],
+    tips,
+    buttons: [
+      ...(practiceWords.length ? [[`🎯 Oefen deze ${practiceWords.length} woord${practiceWords.length===1?'':'en'}`,'green',()=>startSession(mode,{words:practiceWords})]] : []),
+      ['🔄 Nieuwe ronde','blue',()=>startSession(mode)],
+      ['Menu','ghost',goHome]
+    ]
+  });
+  S=null;
+}
+
+/* ═════════ RESULTATEN ═════════ */
+function renderResults(o){
+  $('r-title').textContent=o.title; $('r-sub').textContent=o.sub||'';
+  $('r-tiles').innerHTML=o.tiles.map(([v,l,c])=>`<div class="tile"><b style="color:var(--${c})">${v}</b><span>${l}</span></div>`).join('');
+  $('r-extra').innerHTML=o.extra||''; $('r-extra').hidden=!o.extra;
+  $('r-lists').innerHTML=(o.lists||[]).filter(l=>l.rows.length).map(l=>`<div class="rlist ${l.cls}"><h3>${l.title}</h3>${l.rows.map(r=>`<div class="rrow">${r}</div>`).join('')}</div>`).join('');
+  const t=$('r-tips'); t.hidden=!(o.tips&&o.tips.length);
+  t.innerHTML = t.hidden ? '' : `<h3>💡 Tips</h3><ul>${o.tips.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+  const bw=$('r-btns'); bw.innerHTML='';
+  o.buttons.forEach(([label,cls,fn],i)=>{ const b=document.createElement('button'); b.className='btn '+cls; b.textContent=label; b.onclick=fn; bw.appendChild(b); if(!i) setTimeout(()=>b.focus({preventScroll:true}),50); });
+  show('results');
+}
+
+/* ═════════ FLASHCARDS ═════════ */
+let F=null;
+function startFlash(opts={}){
+  touchDay();
+  const words = opts.words ? shuffle(opts.words) : pickWeighted(VOCAB, sessionLen(VOCAB));
+  F = {deck: words.map(w=>({w, dir: P.dir==='mix' ? (Math.random()<.5?'nl-de':'de-nl') : P.dir})), i:0, known:[], hard:new Map(), flipped:false, xp:0, busy:false, total:words.length};
+  show('flash'); renderFlash();
+}
+function renderFlash(){
+  if(F.i>=F.deck.length) return endFlash();
+  const {w,dir}=F.deck[F.i], card=$('f-card');
+  card.classList.add('noanim'); card.classList.remove('flipped'); F.flipped=false; void card.offsetWidth; card.classList.remove('noanim');
+  const de=`<span>${fmtDe(w.de)}</span>${speakBtn(w.de)}`, nl=`<span>${esc(w.nl)}</span>`;
+  $('f-lang1').textContent = dir==='nl-de' ? '🇳🇱 Nederlands' : '🇩🇪 Duits';
+  $('f-lang2').textContent = dir==='nl-de' ? '🇩🇪 Duits' : '🇳🇱 Nederlands';
+  $('f-word1').innerHTML = dir==='nl-de' ? nl : de;
+  $('f-word2').innerHTML = dir==='nl-de' ? de : nl;
+  $('f-ctx').innerHTML = '📝 '+(w.cloze ? esc(w.cloze.before)+'<b>'+esc(w.cloze.word)+'</b>'+esc(w.cloze.after) : esc(w.ctx));
+  const done=F.known.length;
+  $('f-bar').style.width=(done/F.total*100)+'%';
+  $('f-count').textContent=`${Math.min(done+1,F.total)}/${F.total}`;
+  $('f-known').textContent=done; $('f-hard').textContent=F.hard.size;
+  F.busy=false;
+}
+function flipFlash(){ if(!F || F.busy) return; F.flipped=!F.flipped; $('f-card').classList.toggle('flipped',F.flipped); }
+function markFlash(knew){
+  if(!F || F.busy) return; F.busy=true;
+  const item=F.deck[F.i], {w}=item;
+  if(knew){
+    F.known.push(item);
+    if(!F.hard.has(w.key)){ grade(w,'ok'); F.xp+=2; }
+    F.i++;
+  } else {
+    if(!F.hard.has(w.key)) grade(w,'soft');
+    F.hard.set(w.key,(F.hard.get(w.key)||0)+1);
+    F.deck.splice(F.i,1);
+    const rest=F.deck.length-F.i;
+    F.deck.splice(F.i + (rest>0 ? Math.min(rest, 2+Math.floor(Math.random()*Math.max(1,rest-1))) : 0), 0, item);
+  }
+  setTimeout(renderFlash, F.flipped ? 120 : 60);
+}
+function endFlash(){
+  if(!F) return goHome();
+  addXP(F.xp);
+  const hardWords=[...F.hard.entries()].sort((a,b)=>b[1]-a[1]).map(([k,n])=>({w:VOCAB.find(v=>v.key===k), n}));
+  const seenTotal=F.known.length+F.hard.size;
+  if(!seenTotal){ F=null; return goHome(); }
+  const finished=F.i>=F.deck.length;
+  renderResults({
+    title: !hardWords.length && finished ? 'ALLES GEKEND!' : finished ? 'STAPEL KLAAR!' : 'GOED BEZIG!',
+    sub: `Flashcards · ${F.known.length} van ${F.total} kaarten gekend`,
+    tiles: [[F.known.length,'Gekend','green'],[hardWords.length,'Lastig','orange'],[F.total-F.known.length,'Niet af','blue'],[F.xp,'XP','gold']],
+    lists: [{title:'🔄 Lastige kaarten', cls:'meh', rows: hardWords.map(h=>`${esc(h.w.nl)} = ${fmtDe(h.w.de)}<small>${h.n}× "nog niet"</small>`)}],
+    tips: hardWords.length ? ['Lastige kaarten blijven beter hangen als je ze daarna <b>typt</b>: actief ophalen werkt beter dan herkennen.'] : [],
+    buttons: [
+      ...(hardWords.length ? [[`⌨️ Typ de ${hardWords.length} lastige woorden`,'green',()=>startSession('typed',{words:hardWords.map(h=>h.w)})]] : []),
+      ['🃏 Nieuwe stapel','blue',()=>startFlash()],
+      ['Menu','ghost',goHome]
+    ]
+  });
+  F=null;
+}
+$('f-card').addEventListener('click', e=>{ if(e.target.closest('[data-say]')) return; flipFlash(); });
+$('f-later').onclick=()=>markFlash(false);
+$('f-knew').onclick=()=>markFlash(true);
+$('f-stop').onclick=endFlash;
+
+/* ═════════ LIDWOORD-SPRINT ═════════ */
+const SP={running:false};
+function openSprint(){
+  touchDay();
+  Object.assign(SP,{running:false});
+  $('s-word').textContent='Klaar?'; $('s-score').textContent='0'; $('s-combo').textContent='';
+  $('s-hint').textContent = `${ART_POOL.length} zelfstandige naamwoorden · 60 seconden${P.bestSprint?` · record: ${P.bestSprint}`:''}`;
+  $('s-btns').hidden=true; $('s-start').hidden=false; $('s-bar').style.width='100%'; $('s-time').textContent='60s'; $('s-card').className='qcard';
+  show('sprint'); $('s-start').focus();
+}
+function startSprint(){
+  Object.assign(SP,{running:true, t0:performance.now(), dur:60000, score:0, combo:0, bestCombo:0, xp:0, wrong:new Map(), deck:shuffle(ART_POOL), i:0, busy:false});
+  $('s-start').hidden=true; $('s-btns').hidden=false; $('s-hint').textContent='Toetsen 1 · 2 · 3';
+  sprintShow(); requestAnimationFrame(sprintTick);
+}
+function sprintShow(){
+  if(SP.i>=SP.deck.length){ SP.deck=shuffle(ART_POOL); SP.i=0; }
+  const it=SP.deck[SP.i];
+  $('s-word').innerHTML=`<span class="art" style="color:var(--faint)">___</span>${esc(it.noun)}`;
+  $('s-card').className='qcard';
+}
+function sprintTick(){
+  if(!SP.running) return;
+  const left=Math.max(0, SP.dur-(performance.now()-SP.t0));
+  $('s-bar').style.width=(left/SP.dur*100)+'%'; $('s-time').textContent=Math.ceil(left/1000)+'s';
+  if(left<=0) return stopSprint(false);
+  requestAnimationFrame(sprintTick);
+}
+function sprintAnswer(a){
+  if(!SP.running || SP.busy) return;
+  const it=SP.deck[SP.i];
+  if(a===it.art){
+    SP.score++; SP.combo++; SP.bestCombo=Math.max(SP.bestCombo,SP.combo); SP.xp += SP.combo>=5 ? 3 : 2;
+    $('s-card').className='qcard hit-ok'; SP.i++;
+    $('s-score').textContent=SP.score; $('s-combo').textContent = SP.combo>=3 ? `🔥 ${SP.combo}× combo` : '';
+    setTimeout(()=>{ if(SP.running) sprintShow(); }, 110); SP.busy=true; setTimeout(()=>SP.busy=false,110);
+  } else {
+    SP.combo=0; SP.wrong.set(it.w.key,it); SP.busy=true;
+    $('s-card').className='qcard hit-bad'; $('s-combo').textContent='';
+    $('s-word').innerHTML=`<span class="art art-${it.art}">${it.art}</span>${esc(it.noun)}`;
+    setTimeout(()=>{ SP.busy=false; SP.i++; if(SP.running) sprintShow(); }, 850);
+  }
+}
+function stopSprint(silent){
+  if(!SP.running) return; SP.running=false;
+  const record = SP.score>P.bestSprint && !silent;
+  if(!silent){ if(record) P.bestSprint=SP.score; save(); }
+  addXP(SP.xp);
+  if(silent) return;
+  const wrong=[...SP.wrong.values()];
+  renderResults({
+    title: record ? 'NIEUW RECORD!' : SP.score>=25 ? 'BLITZSCHNELL!' : 'ZEIT IST UM!',
+    sub: `Lidwoord-sprint · record ${P.bestSprint}`,
+    tiles: [[SP.score,'Goed','green'],[wrong.length,'Fout','red'],[SP.bestCombo,'Beste combo','yellow'],[SP.xp,'XP','gold']],
+    lists: [{title:'❌ Deze lidwoorden', cls:'bad', rows: wrong.map(it=>`<span class="art art-${it.art}">${it.art}</span> ${esc(it.noun)}<small>${esc(it.w.nl)} · ${GENDER[it.art]}</small>`)}],
+    tips: ['Leer een zelfstandig naamwoord altijd mét lidwoord: niet "Zimmer" maar "<span class="art art-das">das</span> Zimmer".',
+           'Woorden op <b>-ung</b> en <b>-e</b> zijn vaak <span class="art art-die">die</span>; woorden op <b>-chen</b> zijn altijd <span class="art art-das">das</span>.'],
+    buttons: [['⚡ Nog een sprint','blue',openSprint],['Menu','ghost',goHome]]
+  });
+}
+$('s-start').onclick=startSprint;
+$('s-stop').onclick=()=>{ if(SP.running) stopSprint(false); else goHome(); };
+document.querySelectorAll('#s-btns .abtn').forEach(b=>b.onclick=()=>sprintAnswer(b.dataset.a));
+
+/* ═════════ WOORDENLIJST ═════════ */
+let listFilter='all';
+function openList(){ $('l-q').value=''; renderList(); show('list'); }
+function renderList(){
+  const q=deep(norm($('l-q').value));
+  const rows=VOCAB.filter(w => (listFilter==='all' || status(w)===listFilter) && (!q || deep(norm(w.nl)).includes(q) || deep(norm(w.de)).includes(q)));
+  $('l-count').textContent=`${rows.length} / ${VOCAB.length}`;
+  $('l-rows').innerHTML = rows.length ? rows.map(w=>{
+    const b=box(w), dots=[0,1,2,3,4].map(i=>`<i class="${i<b?'on':''}"></i>`).join('');
+    return `<div class="wrow"><div class="wtext"><div class="de">${fmtDe(w.de)}</div><div class="nl">${esc(w.nl)}</div></div><div class="dots" title="${b} van 5">${dots}</div>${speakBtn(w.de,1)}</div>`;
+  }).join('') : `<div class="empty">Geen woorden gevonden.</div>`;
+}
+$('l-q').addEventListener('input', renderList);
+document.querySelectorAll('#l-filters button').forEach(b=>b.onclick=()=>{
+  listFilter=b.dataset.f; document.querySelectorAll('#l-filters button').forEach(x=>x.classList.toggle('on',x===b)); renderList();
+});
+$('l-back').onclick=goHome;
+
+/* ═════════ TOETSENBORD ═════════ */
+document.addEventListener('keydown', e=>{
+  if(!$('lvl-ov').hidden){ if(e.key==='Escape'){ $('ov-close').click(); } return; }
+  if(e.target.closest('input') && current!=='play') return;
+  if(current==='play' && S){
+    if(S.mode==='mc' && !S.answered && /^[1-4]$/.test(e.key)){ e.preventDefault(); pickMC(+e.key-1); return; }
+    if(e.key==='Enter' && S.answered && !e.target.closest('button,input')){ e.preventDefault(); next(); }
+  } else if(current==='flash' && F){
+    if(e.target.closest('button') && (e.key==='Enter'||e.key===' ')) return;
+    if(e.key===' '||e.key==='Enter'){ e.preventDefault(); flipFlash(); }
+    else if(e.key==='ArrowLeft'||e.key==='1'){ e.preventDefault(); markFlash(false); }
+    else if(e.key==='ArrowRight'||e.key==='2'){ e.preventDefault(); markFlash(true); }
+  } else if(current==='sprint'){
+    const map={'1':'der','2':'die','3':'das'};
+    if(SP.running && map[e.key]){ e.preventDefault(); sprintAnswer(map[e.key]); }
+  }
+});
+
+renderHome();
+</script>
+</body>
+</html>
